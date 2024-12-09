@@ -1,0 +1,85 @@
+line-length = 88
+indent-width = 4
+
+# Assume Python 3.9 (flask requires 3.9+)
+target-version = "py39"
+
+# Cache settings (optional)
+cache-dir = ".ruff_cache"
+
+
+
+[lint]
+select = [
+  "A",  # flake8-builtins
+  "ASYNC", # https://docs.astral.sh/ruff/rules/#flake8-async-async
+  "B",  # flake8-bugbear
+  "BLE", # flake8-blind-except
+  "C4",  # unnecessary comprehensions, map()
+  "COM",  # flake8-commas
+  "DTZ", # flake8-datetimez
+  "E",  # pycodestyle
+  "EXE", # flake8-executable
+  "F",  # pyflakes
+  "FLY",  # flynt
+  "G",  # flake8-logging-format
+  "I",  # isort
+  "ICN", # https://github.com/joaopalmeiro/flake8-import-conventions
+  "ISC", # https://pypi.org/project/flake8-implicit-str-concat/
+  "LOG", # flake8-logging
+  "PERF", # perflint
+  "PIE", # https://pypi.org/project/flake8-pie/
+  "PLC",  # Pylint conventions
+  "PLE",  # Pylint error
+  "PLW",  # Pylint warnings
+  "PT",  # https://pypi.org/project/flake8-pytest-style/
+  "PTH",  # flake8 use pathlib
+  "RET", # https://pypi.org/project/flake8-return/
+  "RUF",  # Ruff rules
+  "S",  # https://docs.astral.sh/ruff/rules/#flake8-bandit-s
+  "SIM",  # https://pypi.org/project/flake8-simplify/
+  "T10",  # flake8-debugger
+  "TRY",  # tryceratops
+  "UP",  # pyupgrade
+  "W",  # pycodestyle
+  #"ARG",  # flake8 unused arguments (not really helpful, unused func args are common and ok)
+  #"ERA",  # No commented out code
+  #"D",  # pydocstyle (too much)
+  #"N",  # pep8-naming (too opinionated)
+  #"NPY", # numpy
+  #"PD", # pandas
+  #"PL",  # Full Pylint (too much)
+  #"PLR",  # Pylint refactor (too much/too opinionated)
+  ]
+
+# Excluding specific lint rules that conflict with the formatter
+ignore = [
+    "W191",  # tab-indentation
+    "E111",  # indentation-with-invalid-multiple
+    "E114",  # indentation-with-invalid-multiple-comment
+    "E117",  # over-indented
+    "E501",
+    "E721",  # known issues with AQLAlchemy and more
+    "D206",  # indent-with-spaces
+    "D300",  # triple-single-quotes
+    "Q000",  # bad-quotes-inline-string
+    "Q001",  # bad-quotes-multiline-string
+    "Q002",  # bad-quotes-docstring
+    "Q003",  # avoidable-escaped-quote
+    "COM812", # missing-trailing-comma
+    "COM819", # prohibited-trailing-comma
+    "ISC001", # single-line-implicit-string-concatenation
+    "ISC002",  # multi-line-implicit-string-concatenation
+    "SIM108",  # ternary operator
+]
+
+fixable = ["ALL"]
+
+
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
