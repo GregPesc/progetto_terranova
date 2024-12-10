@@ -62,58 +62,21 @@
 
 # Tabelle DB
 
-## Catalog
+**NON AGGIORNATO. VEDERE `models.py` DIRETTAMENTE**
+
+## ApiDrink
 > Id, nome e immagine dei drink dell'API.  
 Chiamate API solo quando informazioni complete sono richieste (es: pagina cocktail specifico).
 
-```
-CREATE TABLE "Catalog" (
-	"idDrink"	INTEGER,
-	"strDrink"	TEXT NOT NULL,
-	"strDrinkThumb"	TEXT NOT NULL,
-	PRIMARY KEY("idDrink")
-);
-```
 
 
-
-## Drink
+## UserDrink
 > Drink creati dell'utente.  
 (Sottoinsieme dei campi dei drink dall'API).
-
-```
-CREATE TABLE "Drink" (
-	"idDrink"	INTEGER,
-	"strDrink"	TEXT NOT NULL,
-	"strDrinkAlternate"	INTEGER,
-	"strAlcoholic"	TEXT NOT NULL CHECK("strAlcoholic" IN ('Alcoholic', 'Non alcoholic', 'Optional alcohol')),
-	"strInstructions"	TEXT,
-	"strDrinkThumb"	TEXT,
-	"strIngredient1"	TEXT,
-	"strIngredient2"	TEXT,
-	"strIngredient3"	TEXT,
-	"strIngredient4"	TEXT,
-	"strIngredient5"	TEXT,
-	"strMeasure1"	TEXT,
-	"strMeasure2"	TEXT,
-	"strMeasure3"	TEXT,
-	"strMeasure4"	TEXT,
-	"strMeasure5"	TEXT,
-	PRIMARY KEY("idDrink" AUTOINCREMENT)
-);
-```
 
 
 
 ## Favorite
 > Drink contrassegnati preferiti dall'utente.
 
-> NOTA: se `isFromAPI` è `1` allora `idDrink` si riferisce all'`idDrink` dell'API, se è `0` si riferisce all'`idDrink` della tabella `Drink`.
-
-```
-CREATE TABLE "Favorite" (
-	"idDrink"	INTEGER,
-	"isFromAPI"	INTEGER NOT NULL CHECK(isFromAPI IN (0, 1)),
-	PRIMARY KEY("idDrink")
-);
-```
+> NOTA: se `islocal` è `0` allora `drink_id` si riferisce all'`id` dell'API, se è `1` si riferisce all'`id` della tabella `UserDrink`.
