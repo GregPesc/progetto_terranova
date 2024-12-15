@@ -1,3 +1,4 @@
+import flask_login
 import flask_sqlalchemy
 import jinja2
 import sqlalchemy
@@ -12,6 +13,8 @@ class Base(sqlalchemy.orm.DeclarativeBase):
 
 db = flask_sqlalchemy.SQLAlchemy(model_class=Base)
 
+login_manager = flask_login.LoginManager()
+
 from .models import *  # noqa: E402, F403
 
 
@@ -25,8 +28,8 @@ def create_app(config_class=Config):
     app.jinja_env.trim_blocks = True
     app.jinja_env.lstrip_blocks = True
 
-    # DB configuration
     db.init_app(app)
+    login_manager.init_app(app)
 
     from app.main.routes import main
 

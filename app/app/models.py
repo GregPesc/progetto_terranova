@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import enum
 
+from flask_login import UserMixin
 from sqlalchemy import Boolean, Column, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app import db
+from app import db, login_manager
 
 
 class ApiDrink(db.Model):
@@ -38,6 +39,26 @@ drink_ingredient = db.Table(
 )
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(int(user_id))
+
+
+# https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#configuring-delete-behavior-for-one-to-many
+class User(db.Model, UserMixin):
+    __tablename__ = "User"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    email: Mapped[str] = mapped_column(nullable=False, unique=True)
+    password: Mapped[int] = mapped_column(nullable=False)
+    user_drinks: Mapped[list[UserDrink]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
+
+    def __repr__(self):
+        return f"User id={self.id}, email={self.email}, password={self.password}"
+
+
 class UserDrink(db.Model):
     __tablename__ = "UserDrink"
 
@@ -50,6 +71,8 @@ class UserDrink(db.Model):
     ingredients: Mapped[list[Ingredient]] = relationship(
         secondary=drink_ingredient, back_populates="drinks"
     )
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"))
+    user: Mapped[User] = relationship(back_populates="user_drinks")
 
     def __repr__(self):
         return f"<UserDrink id={self.id}, name='{self.name}', alt_name='{self.alt_name}', alcoholic_type='{self.alcoholic_type}', instructions='{self.instructions}' thumbnail='{self.thumbnail}', ingredients='{self.ingredients}'>"
