@@ -3,6 +3,7 @@ import flask_sqlalchemy
 import jinja2
 import sqlalchemy
 from flask import Flask
+from flask_wtf import CSRFProtect
 
 from app.config import Config
 
@@ -12,8 +13,8 @@ class Base(sqlalchemy.orm.DeclarativeBase):
 
 
 db = flask_sqlalchemy.SQLAlchemy(model_class=Base)
-
 login_manager = flask_login.LoginManager()
+csfr = CSRFProtect()
 
 from .models import *  # noqa: E402, F403
 
@@ -30,6 +31,7 @@ def create_app(config_class=Config):
 
     db.init_app(app)
     login_manager.init_app(app)
+    csfr.init_app(app)
 
     from app.login.routes import login
     from app.main.routes import main
