@@ -31,9 +31,11 @@ def create_app(config_class=Config):
     db.init_app(app)
     login_manager.init_app(app)
 
+    from app.login.routes import login
     from app.main.routes import main
 
     app.register_blueprint(main)
+    app.register_blueprint(login)
 
     with app.app_context():
         db.create_all()

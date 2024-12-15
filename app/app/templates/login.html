@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <fieldset>
+        <legend>Inserisci le tue credenziali</legend>
+        <div>
+            {{ form.email(placeholder='Email') }}
+            {% if form.email.errors %}
+            <div>
+                {% for error in form.email.errors %}
+                <span>{{error}}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div>
+            {{ form.password(placeholder='Password') }}
+            {% if form.password.errors %}
+            <div>
+                {% for error in form.password.errors %}
+                <span>{{error}}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div>
+            {{ form.remember }}
+            {{ form.remember.label }}
+        </div>
+        <div>
+            {{ form.submit }}
+        </div>
+    </fieldset>
+</form>
+{% endblock content %}
