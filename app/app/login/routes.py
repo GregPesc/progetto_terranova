@@ -45,7 +45,7 @@ def register_route():
             "utf-8"
         )
 
-        new_user = User(email=form.email.data, password=processed_pw)
+        new_user = User(email=form.email.data.lower(), password=processed_pw)
         db.session.add(new_user)
         db.session.commit()
 

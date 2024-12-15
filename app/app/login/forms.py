@@ -15,7 +15,9 @@ class LoginForm(FlaskForm):
 
 class RegisterForm(FlaskForm):
     def validate_email(form, field):
-        user = db.session.execute(db.select(User).filter_by(email=field.data)).first()
+        user = db.session.execute(
+            db.select(User).filter_by(email=field.data.lower())
+        ).first()
 
         if user:
             return ValidationError("Email già esitente. Esegui il login.")
