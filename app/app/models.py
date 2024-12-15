@@ -41,7 +41,7 @@ drink_ingredient = db.Table(
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 
 # https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#configuring-delete-behavior-for-one-to-many

@@ -3,7 +3,7 @@
 <form method="POST" action="">
     {{ form.hidden_tag() }}
     <fieldset>
-        <legend>Esegui il login</legend>
+        <legend>Registrati</legend>
         <div>
             {{ form.email(placeholder='Email') }}
             {% if form.email.errors %}
@@ -25,8 +25,14 @@
             {% endif %}
         </div>
         <div>
-            {{ form.remember }}
-            {{ form.remember.label }}
+            {{ form.confirm_password(placeholder='Conferma password') }}
+            {% if form.confirm_password.errors %}
+            <div>
+                {% for error in form.confirm_password.errors %}
+                <span>{{error}}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
         <div>
             {{ form.submit }}
