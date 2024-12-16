@@ -33,14 +33,16 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     csrf.init_app(app)
 
+    from app.favorite.routes import favorite
     from app.login.routes import login
     from app.main.routes import main
     from app.manage_recipes.routes import manage_recipes
     from app.search.routes import search
 
-    app.register_blueprint(manage_recipes)
+    app.register_blueprint(favorite)
     app.register_blueprint(login)
     app.register_blueprint(main)
+    app.register_blueprint(manage_recipes)
     app.register_blueprint(search)
 
     with app.app_context():
