@@ -54,6 +54,10 @@ class User(db.Model, UserMixin):
     user_drinks: Mapped[list[UserDrink]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
+    user_favorites: Mapped[list[Favorite]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
+
 
     def __repr__(self):
         return f"User id={self.id}, email={self.email}, password={self.password}"
@@ -93,8 +97,10 @@ class Favorite(db.Model):
 
     drink_id: Mapped[int] = mapped_column(primary_key=True)
     is_local: Mapped[bool] = mapped_column(
-        Boolean(create_constraint=True), nullable=False
+        Boolean(create_constraint=True), nullable=False, primary_key=True
     )
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"))
+    user: Mapped[User] = relationship(back_populates="user_favorites")
 
     def __repr__(self):
         return f"<Favorite drink_id={self.drink_id}, is_local='{self.is_local}'>"
