@@ -1,6 +1,6 @@
 import flask_bcrypt
 from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, logout_user
 
 from app import db
 from app.login.forms import LoginForm, RegisterForm
@@ -9,9 +9,10 @@ from app.models import User
 login = Blueprint("login", __name__)
 
 
-@login.route("/login", methods=["GET", "POST"])
+@login.route("/account/login", methods=["GET", "POST"])
 def login_route():
     if current_user.is_authenticated:
+        flash("Login già eseguito.", category="info")
         return redirect(url_for("main.home"))
 
     form = LoginForm()
@@ -33,9 +34,10 @@ def login_route():
     return render_template("login.html", title="Login", form=form)
 
 
-@login.route("/register", methods=["GET", "POST"])
+@login.route("/account/register", methods=["GET", "POST"])
 def register_route():
     if current_user.is_authenticated:
+        flash("Esegui il logout per registrarti.", category="info")
         return redirect(url_for("main.home"))
 
     form = RegisterForm()
@@ -50,7 +52,17 @@ def register_route():
         db.session.commit()
 
         login_user(new_user)
-        flash("User registered.")
+        flash("Utente registrato.", category="success")
         return redirect(url_for("main.home"))
 
     return render_template("register.html", title="Register", form=form)
+
+@login.route("/account/logout")
+def logout_route():
+    if not current_user.is_authenticated:
+        flash("Hai già eseguito il logout.", category="info")
+        return redirect(url_for("main.home"))
+
+    logout_user()
+    flash("Logout eseguito.", category="success")
+    return redirect(url_for("main.home"))
