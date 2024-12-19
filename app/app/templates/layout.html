@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Applicazione.">
-    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    
 
     {% if title %}
     <title>{{ title }}</title>
@@ -15,25 +16,62 @@
 </head>
 
 <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="/">
+          <img src="{{ url_for('static', filename='images/resultlogo.png') }}" alt="Logo" width="70" height="80">
+            </a>
+        
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+            </div>
+        
+            <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="">
+                Home
+                </a>
+                <a class="navbar-item" href="">
+                About
+                </a>
+            </div>
+        
+            <div class="navbar-end">
+                <div class="navbar-item">
+                <div class="buttons">
+                    <a class="button is-primary" href="">
+                    <strong>Login</strong>
+                    </a>
+                    <a class="button is-light" href="">
+                    Register
+                    </a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </nav>
     {% if get_flashed_messages() %}
-    <!-- Start flashes section-->
+    <!-- Start flashes section -->
     <div class="container mt-3 mb-4">
         {% for category, message in get_flashed_messages(with_categories=True) %}
-        <div class="alert alert-{{ category }} alert-dismissable" role="alert">
+        <div class="notification is-{{ category }} is-dismissable">
             {{ message }}
-            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+            <button class="delete"></button>
+        </div>                                                         
         {% endfor %}
     </div>
     <!-- End flashes section -->
-    {% endif %}
+{% endif %}
 
     <!-- Start page content -->
     {% block content %}{% endblock content %}
     <!-- End page content -->
 
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/htmx.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 
 </html>
