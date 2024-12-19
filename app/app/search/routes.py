@@ -1,6 +1,9 @@
 import requests
 from flask import Blueprint, abort, request
 
+from app import db
+from app.models import Ingredient, UserDrink, drink_ingredient
+
 search = Blueprint("search", __name__)
 
 API_BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
@@ -86,4 +89,54 @@ def catalog_search():
     return {"drinks_ids": list(combined_results)}
 
 
-def bar_search(): ...
+@search.route("/api/bar-search")
+def bar_search():
+    drink_name = request.args.get("name", None)
+    alcoholic_type = request.args.get("type", None)
+    category = request.args.get("category", None)
+    ingredient_names = request.args.getlist("ingredient")  # Allow multiple ingredients
+
+    query = db.session.query(UserDrink)
+
+    if drink_name:
+        query = query.filter(UserDrink.name.ilike(f"%{drink_name}%"))
+
+    if alcoholic_type:
+        query = query.filter(UserDrink.alcoholic_type == alcoholic_type)
+
+    if category:
+        query = query.filter(UserDrink.category == category)
+
+    if ingredient_names:
+        for ingredient_name in ingredient_names:
+            query = query.filter(
+                UserDrink.ingredients.any(Ingredient.name.ilike(f"%{ingredient_name}%"))
+            )
+
+    drinks = query.all()
+
+    result = []
+    for drink in drinks:
+        ingredients = (
+            db.session.query(Ingredient.name, drink_ingredient.c.measure)
+            .join(drink_ingredient, Ingredient.id == drink_ingredient.c.ingredients_id)
+            .filter(drink_ingredient.c.drink_id == drink.id)
+            .all()
+        )
+
+        result.append(
+            {
+                "id": drink.id,
+                "name": drink.name,
+                "category": drink.category.value,
+                "alcoholic_type": drink.alcoholic_type.value,
+                "instructions": drink.instructions,
+                "thumbnail": drink.thumbnail,
+                "ingredients": [
+                    {"name": ingredient[0], "measure": ingredient[1]}
+                    for ingredient in ingredients
+                ],
+            }
+        )
+
+    return {"drinks": result}
