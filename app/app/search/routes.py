@@ -1,5 +1,7 @@
 import requests
 from flask import Blueprint, abort, request
+from flask_login import current_user, login_required
+from sqlalchemy import select
 
 from app import db
 from app.models import Ingredient, UserDrink, drink_ingredient
@@ -9,7 +11,8 @@ search = Blueprint("search", __name__)
 API_BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
 
 
-@search.route("/api/catalog-search")
+@search.route("/api/search/catalog")
+@login_required
 def catalog_search():
     drink_name = request.args.get("name", None)
     alcoholic_type = request.args.get("type", None)
@@ -58,7 +61,7 @@ def catalog_search():
 
         # Query by ingredients (multiple)
         if ingredient_names:
-            ingredient_sets = []
+            ingredient_sets: list[set] = []
             for ingredient_name in ingredient_names:
                 res = requests.get(
                     API_BASE_URL + "/filter.php",
@@ -66,7 +69,8 @@ def catalog_search():
                     params={"i": ingredient_name},
                 ).json()
                 drinks = res.get("drinks")
-                if drinks and isinstance(drinks, list):  # Ensure drinks is a list
+                # when drinks are found drinks is a list of ids, otherwise it is a string ('no data found')
+                if drinks and isinstance(drinks, list):
                     ingredient_sets.append({drink["idDrink"] for drink in drinks})
                 else:
                     ingredient_sets.append(set())
@@ -89,40 +93,46 @@ def catalog_search():
     return {"drinks_ids": list(combined_results)}
 
 
-@search.route("/api/bar-search")
+@search.route("/api/search/mybar")
+@login_required
 def bar_search():
     drink_name = request.args.get("name", None)
     alcoholic_type = request.args.get("type", None)
     category = request.args.get("category", None)
     ingredient_names = request.args.getlist("ingredient")  # Allow multiple ingredients
 
-    query = db.session.query(UserDrink)
+    # if no parameters are sent all drinks are sent back
+
+    query = select(UserDrink)
 
     if drink_name:
-        query = query.filter(UserDrink.name.ilike(f"%{drink_name}%"))
+        query = query.where(UserDrink.name.ilike(f"%{drink_name}%"))
 
     if alcoholic_type:
-        query = query.filter(UserDrink.alcoholic_type == alcoholic_type)
+        query = query.where(UserDrink.alcoholic_type == alcoholic_type)
 
     if category:
-        query = query.filter(UserDrink.category == category)
+        query = query.where(UserDrink.category == category)
 
     if ingredient_names:
         for ingredient_name in ingredient_names:
-            query = query.filter(
+            query = query.where(
                 UserDrink.ingredients.any(Ingredient.name.ilike(f"%{ingredient_name}%"))
             )
 
-    drinks = query.all()
+    query = query.where(UserDrink.user == current_user)
+
+    drinks = db.session.execute(query).scalars().all()
 
     result = []
     for drink in drinks:
-        ingredients = (
-            db.session.query(Ingredient.name, drink_ingredient.c.measure)
+        ingredients_query = (
+            select(Ingredient.name, drink_ingredient.c.measure)
             .join(drink_ingredient, Ingredient.id == drink_ingredient.c.ingredients_id)
-            .filter(drink_ingredient.c.drink_id == drink.id)
-            .all()
+            .where(drink_ingredient.c.drink_id == drink.id)
         )
+
+        ingredients = db.session.execute(ingredients_query).all()
 
         result.append(
             {
