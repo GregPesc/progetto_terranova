@@ -100,7 +100,7 @@ class UserDrink(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(nullable=False)
-    categories: Mapped[Category] = mapped_column(nullable=False)
+    category: Mapped[Category] = mapped_column(nullable=False)
     alcoholic_type: Mapped[AlcoholicType] = mapped_column(nullable=False)
     instructions: Mapped[str] = mapped_column(nullable=True)
     thumbnail: Mapped[str] = mapped_column(nullable=True)

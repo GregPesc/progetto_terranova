@@ -35,9 +35,11 @@ def create_app(config_class=Config):
 
     from app.login.routes import login
     from app.main.routes import main
+    from app.search.routes import search
 
     app.register_blueprint(main)
     app.register_blueprint(login)
+    app.register_blueprint(search)
 
     with app.app_context():
         db.create_all()
