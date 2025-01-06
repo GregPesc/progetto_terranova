@@ -12,7 +12,6 @@ API_BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
 
 
 @search.route("/api/search/catalog")
-@login_required
 def catalog_search():
     drink_name = request.args.get("name", None)
     alcoholic_type = request.args.get("type", None)
