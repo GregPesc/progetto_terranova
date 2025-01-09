@@ -17,9 +17,7 @@ class ApiDrink(db.Model):
     thumbnail: Mapped[str] = mapped_column(nullable=False)
 
     def __repr__(self):
-        return (
-            f"<ApiDrink id={self.id}, name='{self.name}', thumbnail='{self.thumbnail}'>"
-        )
+        return f"<ApiDrink id={self.id}, name={self.name}, thumbnail={self.thumbnail}>"
 
 
 class AlcoholicType(enum.Enum):
@@ -40,24 +38,6 @@ class Category(enum.Enum):
     HOMEMADE_LIQUEUR = "Homemade Liqueur"
     BEER = "Beer"
     SOFT_DRINK = "Soft Drink"
-
-
-# def get_ingredient_quantities_for_drink(session, drink_id):
-#     # Aliases for better clarity
-#     DrinkIngredient = aliased(drink_ingredient)
-
-#     # Query to get ingredients and their measures for a specific drink
-#     result = (
-#         session.query(
-#             Ingredient.name,  # Ingredient name
-#             DrinkIngredient.c.measure  # Associated measure
-#         )
-#         .join(DrinkIngredient, DrinkIngredient.c.ingredients_id == Ingredient.id)
-#         .filter(DrinkIngredient.c.drink_id == drink_id)  # Filter by drink ID
-#         .all()
-#     )
-
-#     return result
 
 
 # https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#setting-bi-directional-many-to-many
@@ -90,6 +70,9 @@ class User(db.Model, UserMixin):
     user_favorites: Mapped[list[Favorite]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
+    user_custom_ingredients: Mapped[list[Ingredient]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"User id={self.id}, email={self.email}, password={self.password}"
@@ -107,11 +90,11 @@ class UserDrink(db.Model):
     ingredients: Mapped[list[Ingredient]] = relationship(
         secondary=drink_ingredient, back_populates="drinks"
     )
-    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), nullable=False)
     user: Mapped[User] = relationship(back_populates="user_drinks")
 
     def __repr__(self):
-        return f"<UserDrink id={self.id}, name='{self.name}', alt_name='{self.alt_name}', alcoholic_type='{self.alcoholic_type}', instructions='{self.instructions}' thumbnail='{self.thumbnail}', ingredients='{self.ingredients}'>"
+        return f"<UserDrink id={self.id}, name={self.name}, category={self.category}, alcoholic_type={self.alcoholic_type}, instructions={self.instructions}, thumbnail={self.thumbnail}, ingredients={self.ingredients}>"
 
 
 class Ingredient(db.Model):
@@ -122,6 +105,11 @@ class Ingredient(db.Model):
     drinks: Mapped[list[UserDrink]] = relationship(
         secondary=drink_ingredient, back_populates="ingredients"
     )
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), nullable=True)
+    user: Mapped[User] = relationship(back_populates="user_custom_ingredients")
+
+    def __repr__(self):
+        return f"<Ingredient id={self.id}, name={self.name}, drinks={self.drinks}, user_id={self.user_id}>"
 
 
 class Favorite(db.Model):
@@ -131,8 +119,8 @@ class Favorite(db.Model):
     is_local: Mapped[bool] = mapped_column(
         Boolean(create_constraint=True), nullable=False, primary_key=True
     )
-    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), nullable=False)
     user: Mapped[User] = relationship(back_populates="user_favorites")
 
     def __repr__(self):
-        return f"<Favorite drink_id={self.drink_id}, is_local='{self.is_local}'>"
+        return f"<Favorite drink_id={self.drink_id}, is_local={self.is_local}, user_id={self.user_id}>"

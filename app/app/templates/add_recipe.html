@@ -1,0 +1,113 @@
+<!-- TODO: file temporaneo per testare la funzionalità aggiunta ricette -->
+
+{% extends "layout.html" %} {% block content %}
+<div class="container mt-5">
+    <h2>Add Custom Recipe</h2>
+    <form id="add-recipe-form">
+        <div class="mb-3">
+            <label for="name" class="form-label">Drink Name</label>
+            <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                required
+            />
+        </div>
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <input
+                type="text"
+                class="form-control"
+                id="category"
+                name="category"
+                required
+            />
+        </div>
+        <div class="mb-3">
+            <label for="alcoholic_type" class="form-label"
+                >Alcoholic Type</label
+            >
+            <input
+                type="text"
+                class="form-control"
+                id="alcoholic_type"
+                name="alcoholic_type"
+                required
+            />
+        </div>
+        <div class="mb-3">
+            <label for="instructions" class="form-label">Instructions</label>
+            <textarea
+                class="form-control"
+                id="instructions"
+                name="instructions"
+                rows="3"
+            ></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="thumbnail" class="form-label">Thumbnail URL</label>
+            <input
+                type="text"
+                class="form-control"
+                id="thumbnail"
+                name="thumbnail"
+            />
+        </div>
+        <div class="mb-3">
+            <label for="ingredients_ids" class="form-label"
+                >Ingredients IDs (comma separated)</label
+            >
+            <input
+                type="text"
+                class="form-control"
+                id="ingredients_ids"
+                name="ingredients_ids"
+            />
+        </div>
+        <div class="mb-3">
+            <label for="ingredients_quantities" class="form-label"
+                >Ingredients Quantities (comma separated)</label
+            >
+            <input
+                type="text"
+                class="form-control"
+                id="ingredients_quantities"
+                name="ingredients_quantities"
+            />
+        </div>
+        <button type="submit" class="btn btn-primary">Add Recipe</button>
+    </form>
+</div>
+
+<script>
+    document
+        .getElementById("add-recipe-form")
+        .addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const jsonData = {};
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            });
+
+            fetch("/custom-recipe/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(jsonData),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("Success:", data);
+                    // Handle success - maybe redirect or show a success message
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    // Handle error - maybe show an error message
+                });
+        });
+</script>
+{% endblock %}
