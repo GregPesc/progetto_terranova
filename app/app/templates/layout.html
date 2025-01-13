@@ -12,12 +12,19 @@
           src: url('fonts/LostInSouth.ttf') format('truetype');
         }
     
-        .navbar-text {
-          font-family: 'LostInSouth', sans-serif; /* Usa il font */
-          font-size: 2rem; /* Personalizza la dimensione */
-          font-weight: bold; /* Personalizza il peso */
-        }
-
+        .navbar-brand img {
+      max-height: 50px;
+    }
+    .navbar-menu {
+      justify-content: center;
+      align-items: center;
+      gap: 45px;
+    }
+    .custom-logo {
+      font-family: 'Cursive', sans-serif;
+      font-weight: bold;
+    }
+    
         
       </style>
 
@@ -30,50 +37,33 @@
 
 <body>
 
-        <!-- Dropdown Menu -->
-        <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
-                <img src="{{ url_for('static', filename='images/resultlogo.png') }}" alt="Logo" width="70" height="80">
-            </a>
-            <div class="navbar-dropdown">
-                <a class="navbar-item" href="#">HOME</a>
-                <a class="navbar-item" href="#">CATALOGO</a>
-                <a class="navbar-item" href="#">MY BAR</a>
-                <a class="navbar-item" href="#">PREFERITI</a>
-            </div>
-
-            <!-- This div will center your text at the center of navbar -->
-            <div class="navbar-item has-text-centered" style="margin-left: 38%;>
-                <span class="navbar-text">
-                DRINK A DRINK
-                </span>
-            </div>
-        
-        
-        
-
+    <nav class="navbar is-white">
+        <div class="container">
+          <div class="navbar-menu" >
+              <div class="navbar-start">
+                <img src="{{ url_for('static', filename='images/resultlogo.png') }}"style="width: 80px; height: 100x;">
+                <a class="navbar-item" href="#">Drink a Drink</a>
+              </div>
+              <a class="navbar-item" href="#">Home</a>
+              <a class="navbar-item" href="#">Catalogo</a>
+              <a class="navbar-item" href="#">Mybar</a>
+              <a class="navbar-item" href="#">Preferiti</a>
             <div class="navbar-end">
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <a class="button is-primary" href="">
-                            <strong>Login</strong>
-                        </a>
-                        <a class="button is-light" href="">
-                            Register
-                        </a>
-                    </div>
+              <div class="navbar-item">
+                <div class="buttons">
+                  <a class="button is-light">
+                    <span class="icon">
+                      <img src="{{ url_for('static', filename='images/icona_account.png') }}">
+                    </span>
+                    <span>Accedi</span>
+                  </a>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
-
-        <!-- Burger Menu for Mobile -->
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-        
-</nav>
+    </nav>
+    
     {% if get_flashed_messages() %}
     <!-- Start flashes section -->
     <div class="container mt-3 mb-4">
