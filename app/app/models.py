@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import enum
+import uuid
 
 from flask_login import UserMixin
 from sqlalchemy import Boolean, Column, ForeignKey, String
@@ -81,7 +82,7 @@ class User(db.Model, UserMixin):
 class UserDrink(db.Model):
     __tablename__ = "UserDrink"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(nullable=False)
     category: Mapped[Category] = mapped_column(nullable=False)
     alcoholic_type: Mapped[AlcoholicType] = mapped_column(nullable=False)
@@ -115,9 +116,9 @@ class Ingredient(db.Model):
 class Favorite(db.Model):
     __tablename__ = "Favorite"
 
-    drink_id: Mapped[int] = mapped_column(primary_key=True)
+    drink_id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
     is_local: Mapped[bool] = mapped_column(
-        Boolean(create_constraint=True), nullable=False, primary_key=True
+        Boolean(create_constraint=True), primary_key=True
     )
     user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), nullable=False)
     user: Mapped[User] = relationship(back_populates="user_favorites")

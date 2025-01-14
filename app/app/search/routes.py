@@ -135,7 +135,7 @@ def bar_search():
 
         result.append(
             {
-                "id": drink.id,
+                "id": str(drink.id),
                 "name": drink.name,
                 "category": drink.category.value,
                 "alcoholic_type": drink.alcoholic_type.value,
