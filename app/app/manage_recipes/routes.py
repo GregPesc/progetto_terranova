@@ -1,3 +1,5 @@
+import uuid
+
 from flask import Blueprint, render_template, request
 from flask_login import current_user, login_required
 
@@ -27,6 +29,7 @@ def add_custom_recipe():
         "ingredients_quantities": str  # Comma-separated string of ingredient quantities
     }
     """
+
     if request.method == "POST":
         data: dict = request.json
 
@@ -74,3 +77,42 @@ def add_custom_recipe():
 
     else:
         return render_template("add_recipe.html")
+
+
+@manage_recipes.route("/custom-recipe/delete", methods=["POST"])
+@login_required
+@csrf.exempt  # TODO: controlla se si può rimuovere
+def delete_custom_recipe():
+    """
+    Handle the deletion of a custom recipe.
+
+    Input: POST request with mimetype application/json
+
+    {
+        "drink_id": UUID  # ID of the drink to delete
+    }
+    """
+
+    data: dict = request.json
+    drink_id = data.get("drink_id")
+
+    try:
+        drink_id = uuid.UUID(drink_id, version=4)
+    except ValueError:
+        return {"error": "Invalid drink_id"}, 400
+
+    if not drink_id:
+        return {"error": "Missing drink_id"}, 400
+
+    drink = UserDrink.query.get(drink_id)
+
+    if not drink:
+        return {"error": "Drink not found"}, 404
+
+    if drink.user != current_user:
+        return {"error": "Unauthorized"}, 403
+
+    db.session.delete(drink)
+    db.session.commit()
+
+    return {"message": "Drink deleted successfully"}, 200
