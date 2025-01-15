@@ -1,0 +1,1090 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
+/>
+
+<style>
+  body {
+    background-color: #eaf7f7;
+  }
+
+  .section {
+    padding: 10 !important;
+  }
+  .title-custom {
+    color: #ff3c3c;
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 3rem;
+  }
+  .search-bar {
+    margin: 1rem auto;
+    max-width: 600px;
+  }
+
+  .card-custom {
+    background-color: #eaf7f7;
+    border: 1px solid #d4d4d4;
+    border-radius: 10px;
+    text-align: center;
+    padding: 1rem;
+  }
+  .card-custom img {
+    border-radius: 5px;
+  }
+  .title-custom-card {
+    color: #ff3c3c;
+    font-weight: bold;
+  }
+  .buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .buttons-container button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  .is-clicked-heart {
+    color: white !important;
+    background-color: #ff3860 !important; /* Rosso per il cuore */
+  }
+
+  .is-clicked-pencil {
+    color: white !important;
+    background-color: #23d160 !important; /* Verde per la matita */
+  }
+  .fixed-button {
+    position: fixed !important;
+    bottom: 60px;
+    right: 60px; /*per metterlo tutto a destra*/
+    z-index: 1000; /*per metterlo sopra a tutti gli elementi*/
+  }
+
+  .filter-panel {
+    position: fixed;
+    top: 0;
+    right: -400px; /* Nasconde il pannello fuori dalla vista */
+    width: 400px;
+    height: 100vh;
+    display: flex;
+    background-color: #f5f5f5;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease;
+  }
+.delete.is-pulled-right{
+  position: absolute;
+  top: 5px; 
+  right: 5px;
+
+}
+  .filter-panel.is-visible {
+    right: 0; /* Mostra il pannello */
+    z-index: 2000; /*per metterlo sopra a tutti gli elementi*/
+  }     
+  .overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Colore scuro traslucido */
+  z-index: 1999; /* Assicurati che sia sotto al pannello */
+  display: none; /* Nascondi inizialmente */
+  }
+  .overlay.is-visible {
+  display: block; /* Mostra overlay quando visibile */
+}
+.scrollable-checkboxes {
+  flex-grow: 1; /* Occupa lo spazio disponibile */
+  overflow-y: auto; /* Permette lo scroll verticale */
+  max-height: calc(100vh - 150px); /* Adatta lo spazio lasciando margine per titolo e pulsanti */
+  border-bottom: 30%;
+}
+  .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.is-active {
+      display: flex;
+    }
+.card-custom-modal{
+  background-color: #eaf7f7;
+    border: 1px solid #d4d4d4;
+    border-radius: 10px;
+    text-align: center;
+    padding: 1rem;
+    height: 60%;
+    width: 20%;
+}
+#bottonemodale{
+  position: absolute;
+  top: 100px; 
+  right: 580px;
+}
+
+</style>
+{% extends "layout.html" %} {% block content %}
+<br />
+
+<h1 class="title title-custom">Catalogo</h1>
+
+<!--Barra di ricerca-->
+<div class="field search-bar">
+  <p class="control has-icons-left has-icons-right is-flex">
+    <input
+      class="input"
+      class="input is-expanded"
+      type="text"
+      placeholder="cerca qui"
+      style="padding-right: 3rem"
+    />
+
+    <!-- Icona a sinistra -->
+    <span class="icon is-left">
+      <i class="fas fa-search"></i>
+    </span>
+
+    <!-- Icona a destra -->
+    <span class="field is-grouped is-grouped-right">
+      <button
+        class="button is-right"
+        id="toggleFilters"
+        style="border: none; background: white"
+      >
+        <span class="icon">
+          <i class="fas fa-sliders-h"></i>
+        </span>
+      </button>
+    </span>
+  </p>
+</div>
+
+<br />
+<!--sezione card-->
+<section class="section">
+  <div class="columns is-multiline is-centered">
+    <div class="column"></div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column"></div>
+  </div>
+  <div class="columns is-multiline is-centered">
+    <div class="column"></div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column"></div>
+  </div>
+  <div class="columns is-multiline is-centered">
+    <div class="column"></div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column"></div>
+  </div>
+  <div class="columns is-multiline is-centered">
+    <div class="column"></div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="card card-custom">
+        <div class="card-image">
+          <figure class="image is-square">
+            <img
+              src="https://via.placeholder.com/150x150?text=Negroni"
+              alt="Negroni"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="title is-5 title-custom-card">NEGRONI</p>
+          <div class="buttons-container">
+            <button class="pencil-button">
+              <span class="icon">
+                <i class="fas fa-pen"></i>
+              </span>
+            </button>
+            <button class="heart-button">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column"></div>
+  </div>
+</section>
+
+<div class="overlay"></div>
+
+<!-- Pannello dei filtri -->
+<div id="filterPanel" class="filter-panel box">
+  <div class="container">
+    <h2 class="title is-4">Filtri :</h2>
+    <button id="closeFilters" class="delete is-pulled-right" ></button>
+  </div>
+  <div class="field search-bar">
+    <p class="control has-icons-left has-icons-right is-flex">
+      <input
+        class="input"
+        class="input is-expanded"
+        type="text"
+        placeholder="cerca qui"
+        style="padding-right: 3rem"
+      />
+  
+      <!-- Icona a sinistra -->
+      <span class="icon is-left">
+        <i class="fas fa-search"></i>
+      </span>
+    </p>
+  </div>
+  <div class="scrollable-checkboxes">
+    <!-- Tipologia -->
+    
+    <label class="label">Tipologia:</label>
+   
+      <div class="columns">
+        <div class="column">
+          <label class="checkbox"> <input type="checkbox" /> Alcolico </label>
+        </div>
+        <div class="column">
+          <label class="checkbox"> <input type="checkbox" /> Analcolico </label>
+        </div>
+      </div>
+
+    
+
+    <!-- Ingredienti -->
+   
+    <label class="label">Ingredienti:</label>
+    
+      <div class="columns">
+        <div class="column">
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+        </div>
+        
+        <div class="column">
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Gin </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"> <input type="checkbox" /> Campari </label>
+          </div>
+          <div class="row">
+          <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+          </div>
+        </div>
+      </div>
+    
+    
+  </div>
+    <!-- Pulsanti -->
+
+    <div class="control" style="z-index: 2001;">
+      <button class="button is-danger is-light">Annulla</button>
+    </div>
+    <div class="control">
+      <button class="button is-success">Applica</button>
+    </div>
+</div>
+
+
+  <!-- Bottone dado -->
+  <button class="button is-primary is-large fixed-button" id="diceButton">
+    <span class="icon is-large">
+      <i class="fas fa-dice"></i>
+      <!-- Icona dado -->
+    </span>
+  </button>
+
+  <!--modale card casual drink-->
+  <div class="modal" id="modal">
+    <div class="modal-background">
+      <button id="bottonemodale" class="delete is-pulled-right"></button>
+    </div>
+    <div class="card card-custom-modal">
+      <div class="card-image">
+        <figure class="image is-square">
+          <img
+            src="https://via.placeholder.com/150x150?text=Negroni"
+            alt="Negroni"
+          />
+        </figure>
+      </div>
+      <div class="card-content">
+        <hr>
+        <p class="title is-5 title-custom-card">NEGRONI</p>
+        <p href="#" class="link">Scopri il drink<span class="icon is-small" style="margin-left: 0.5rem;">
+          <i class="fas fa-arrow-right"></i>
+        </span></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Selezione di tutti i bottoni con classe heart-button
+    const heartButtons = document.querySelectorAll(".heart-button");
+    const pencilButtons = document.querySelectorAll(".pencil-button");
+
+    // Aggiunge un event listener a ciascun bottone a forma di cuore
+    heartButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        button.classList.toggle("is-clicked-heart"); // Toggle dello stato cliccato
+      });
+    });
+
+    // Aggiunge un event listener a ciascun bottone a forma di matita
+    pencilButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        button.classList.toggle("is-clicked-pencil"); // Toggle dello stato cliccato
+      });
+    });
+
+    // Seleziona elementi
+    const toggleButton = document.getElementById("toggleFilters");
+    const closeButton = document.getElementById("closeFilters");
+    const filterPanel = document.getElementById("filterPanel");
+    const overlay = document.querySelector(".overlay");
+
+    // Mostra/nasconde il pannello
+    toggleButton.addEventListener("click", () => {
+      filterPanel.classList.toggle("is-visible");
+      overlay.classList.toggle("is-visible");
+    });
+
+    closeButton.addEventListener("click", () => {
+      filterPanel.classList.remove("is-visible");
+      overlay.classList.remove("is-visible");
+    });
+
+    //chiude cliccando sull'overlay
+    overlay.addEventListener("click", () => {
+  filterPanel.classList.remove("is-visible");
+  overlay.classList.remove("is-visible");
+});
+
+    //chiusura panel se clicco fuori
+    document.addEventListener("click", (event) => {
+  if (
+    !filterPanel.contains(event.target) &&
+    !toggleButton.contains(event.target) &&
+    !filterPanel.classList.contains("is-visible")
+  ) {
+    filterPanel.classList.remove("is-visible");
+    overlay.classList.remove("is-visible");
+  }
+});
+
+    
+
+    //apparizione drink casuale
+    const diceButton = document.getElementById("diceButton");
+    const modal = document.getElementById("modal");
+    const modalBackground = modal.querySelector(".modal-background");
+
+    // Mostra la modale al clic del bottone dado
+    diceButton.addEventListener("click", () => {
+      modal.classList.add("is-active");
+    });
+
+    // Chiude la modale al clic sullo sfondo
+    modalBackground.addEventListener("click", () => {
+      modal.classList.remove("is-active");
+    });
+
+    
+    
+  </script>
+  {% endblock content %}
+</div>
