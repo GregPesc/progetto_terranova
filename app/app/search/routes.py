@@ -1,5 +1,5 @@
 import requests
-from flask import Blueprint, abort, request
+from flask import Blueprint, request
 from flask_login import current_user, login_required
 from sqlalchemy import select
 
@@ -79,7 +79,7 @@ def catalog_search():
                 set.intersection(*ingredient_sets) if ingredient_sets else set()
             )
     except requests.exceptions.Timeout:
-        abort(500)
+        return {"error": "The request timed out"}, 504
 
     # Combine all queries
     combined_results = (
@@ -135,7 +135,7 @@ def bar_search():
 
         result.append(
             {
-                "id": drink.id,
+                "id": str(drink.id),
                 "name": drink.name,
                 "category": drink.category.value,
                 "alcoholic_type": drink.alcoholic_type.value,

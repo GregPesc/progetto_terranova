@@ -14,7 +14,7 @@ class Base(sqlalchemy.orm.DeclarativeBase):
 
 db = flask_sqlalchemy.SQLAlchemy(model_class=Base)
 login_manager = flask_login.LoginManager()
-csfr = CSRFProtect()
+csrf = CSRFProtect()
 
 from .models import *  # noqa: E402, F403
 
@@ -31,14 +31,16 @@ def create_app(config_class=Config):
 
     db.init_app(app)
     login_manager.init_app(app)
-    csfr.init_app(app)
+    csrf.init_app(app)
 
     from app.login.routes import login
     from app.main.routes import main
+    from app.manage_recipes.routes import manage_recipes
     from app.search.routes import search
 
-    app.register_blueprint(main)
+    app.register_blueprint(manage_recipes)
     app.register_blueprint(login)
+    app.register_blueprint(main)
     app.register_blueprint(search)
 
     with app.app_context():
