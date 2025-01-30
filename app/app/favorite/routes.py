@@ -9,7 +9,7 @@ favorite = Blueprint("favorite", __name__)
 
 # Route per ottenere tutti i preferiti per un utente
 @favorite.route("/api/favorite", methods=["GET"])
-def favorite_route():
+def get_user_favorites():
     if not current_user.is_authenticated:
         return {"error": "User not authenticated"}, 401
 
@@ -34,7 +34,7 @@ def favorite_route():
 
 # Route per eliminare un preferito
 @favorite.route("/api/favorite/<int:favorite_id>", methods=["DELETE"])
-def delete_favorite_route(favorite_id):
+def delete_user_favorite(favorite_id):
     if not current_user.is_authenticated:
         return {"error": "User not authenticated"}, 401
 
@@ -56,7 +56,7 @@ def delete_favorite_route(favorite_id):
 
 # Route per aggiungere un preferito
 @favorite.route("/api/favorite/<int:favorite_id>", methods=["POST"])
-def add_favorite_route(favorite_id):
+def add_user_favorite(favorite_id):
     if not current_user.is_authenticated:
         return {"error": "User not authenticated"}, 401
 

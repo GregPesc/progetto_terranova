@@ -36,16 +36,16 @@ def create_app(config_class=Config):
     from app.favorite.routes import favorite
     from app.login.routes import login
     from app.main.routes import main
-    from app.random.routes import random
     from app.manage_recipes.routes import manage_recipes
+    from app.random.routes import random
     from app.search.routes import search
 
     app.register_blueprint(favorite)
     app.register_blueprint(login)
     app.register_blueprint(main)
     app.register_blueprint(manage_recipes)
-    app.register_blueprint(search)
     app.register_blueprint(random)
+    app.register_blueprint(search)
 
     with app.app_context():
         db.create_all()

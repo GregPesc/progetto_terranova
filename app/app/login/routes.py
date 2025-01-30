@@ -57,12 +57,12 @@ def register_route():
 
     return render_template("register.html", title="Register", form=form)
 
+
 @login.route("/account/logout")
 def logout_route():
     if not current_user.is_authenticated:
         flash("Hai già eseguito il logout.", category="info")
-        return redirect(url_for("main.home"))
-
-    logout_user()
-    flash("Logout eseguito.", category="success")
+    else:
+        logout_user()
+        flash("Logout eseguito.", category="success")
     return redirect(url_for("main.home"))
