@@ -24,7 +24,7 @@ csrf = CSRFProtect()
 from .models import *  # noqa: E402, F403
 
 
-def create_app(config_class=Config):
+def create_app():
     # Flask configuration
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -52,6 +52,10 @@ def create_app(config_class=Config):
     app.register_blueprint(main)
     app.register_blueprint(manage_recipes)
     app.register_blueprint(random)
+
+    @app.route("/healthcheck")
+    def healthcheck():
+        return "ok", 200
 
     with app.app_context():
         db.create_all()

@@ -1,0 +1,7 @@
+:80 {
+	reverse_proxy app:8080
+
+	handle_errors {
+		respond "Sorry, the service is temporarily unavailable. Please try again later." 502
+	}
+}
