@@ -2,6 +2,10 @@
 
 Applicazione web per i cocktail.
 
+# Deploy
+
+Per deploy con Docker: [README_deploy](./README_deploy.md)
+
 # Come eseguire l'applicazione
 
 Testato con python 3.13.1 su Windows.
@@ -17,9 +21,9 @@ Apri un terminale nella directory che preferisci ed esegui i seguenti comandi:
 ```
 git clone https://github.com/GregPesc/progetto_terranova.git
 cd progetto_terranova
-python -m venv venv
-.\venv\Scripts\activate
-pip install -r requirements.txt
+python -m .venv .venv
+.\.venv\Scripts\activate
+pip install -r app\requirements.txt
 ```
 
 ## Avviare l'applicazione
@@ -27,7 +31,7 @@ pip install -r requirements.txt
 Attiva il virtual environment ed esegui l'applicazione:
 
 ```
-.\venv\Scripts\activate
+.\.venv\Scripts\activate
 python app\run.py
 ```
 
