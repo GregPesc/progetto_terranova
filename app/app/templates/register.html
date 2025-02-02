@@ -1,42 +1,42 @@
+<!-- prettier-ignore -->
 {% extends "layout.html" %}
 {% block content %}
+<!-- prettier-ignore -->
 <form method="POST">
-    {{ form.hidden_tag() }}
-    <fieldset>
-        <legend>Registrati</legend>
-        <div>
-            {{ form.email(placeholder='Email') }}
-            {% if form.email.errors %}
-            <div>
-                {% for error in form.email.errors %}
-                <span>{{error}}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        <div>
-            {{ form.password(placeholder='Password') }}
-            {% if form.password.errors %}
-            <div>
-                {% for error in form.password.errors %}
-                <span>{{error}}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        <div>
-            {{ form.confirm_password(placeholder='Conferma password') }}
-            {% if form.confirm_password.errors %}
-            <div>
-                {% for error in form.confirm_password.errors %}
-                <span>{{error}}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        <div>
-            {{ form.submit }}
-        </div>
-    </fieldset>
+  {{ form.hidden_tag() }}
+  <fieldset>
+    <legend>Registrati</legend>
+    <div>
+      {{ form.email(placeholder='Email') }}
+      {% if form.email.errors %}
+      <div>
+        {% for error in form.email.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <div>
+      {{ form.password(placeholder='Password') }}
+      {% if form.password.errors %}
+      <div>
+        {% for error in form.password.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <div>
+      {{ form.confirm_password(placeholder='Conferma password') }}
+      {% if form.confirm_password.errors %}
+      <div>
+        {% for error in form.confirm_password.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <div>{{ form.submit }}</div>
+  </fieldset>
 </form>
 {% endblock content %}

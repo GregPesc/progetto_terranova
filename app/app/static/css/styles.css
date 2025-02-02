@@ -1,23 +1,23 @@
 @font-face {
-    font-family: "LostInSouth";
-    src: url("fonts/LostInSouth.ttf") format("truetype");
+  font-family: "LostInSouth";
+  src: url("fonts/LostInSouth.ttf") format("truetype");
 }
 
 /* navbar */
 
 .navbar-brand img {
-    max-height: 50px;
+  max-height: 50px;
 }
 
 .navbar-menu {
-    justify-content: center;
-    align-items: center;
-    gap: 45px;
+  justify-content: center;
+  align-items: center;
+  gap: 45px;
 }
 
 .custom-logo {
-    font-family: "Cursive", sans-serif;
-    font-weight: bold;
+  font-family: "Cursive", sans-serif;
+  font-weight: bold;
 }
 
 /* end navbar */

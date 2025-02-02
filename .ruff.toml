@@ -2,7 +2,7 @@ line-length = 88
 indent-width = 4
 
 # Assume Python 3.9 (flask requires 3.9+)
-target-version = "py39"
+target-version = "py313"
 
 # Cache settings (optional)
 cache-dir = ".ruff_cache"

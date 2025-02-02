@@ -1,36 +1,33 @@
+<!-- prettier-ignore -->
 {% extends "layout.html" %}
 {% block content %}
+<!-- prettier-ignore -->
 <form method="POST">
-    {{ form.hidden_tag() }}
-    <fieldset>
-        <legend>Esegui il login</legend>
-        <div>
-            {{ form.email(placeholder='Email') }}
-            {% if form.email.errors %}
-            <div>
-                {% for error in form.email.errors %}
-                <span>{{error}}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        <div>
-            {{ form.password(placeholder='Password') }}
-            {% if form.password.errors %}
-            <div>
-                {% for error in form.password.errors %}
-                <span>{{error}}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-        <div>
-            {{ form.remember }}
-            {{ form.remember.label }}
-        </div>
-        <div>
-            {{ form.submit }}
-        </div>
-    </fieldset>
+  {{ form.hidden_tag() }}
+  <fieldset>
+    <legend>Esegui il login</legend>
+    <div>
+      {{ form.email(placeholder='Email') }}
+      {% if form.email.errors %}
+      <div>
+        {% for error in form.email.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <div>
+      {{ form.password(placeholder='Password') }}
+      {% if form.password.errors %}
+      <div>
+        {% for error in form.password.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <div>{{ form.remember }} {{ form.remember.label }}</div>
+    <div>{{ form.submit }}</div>
+  </fieldset>
 </form>
 {% endblock content %}
