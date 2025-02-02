@@ -56,10 +56,12 @@
       </div>
     </nav>
 
-    {% if get_flashed_messages() %}
+    <!-- prettier-ignore -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
     <!-- Start flashes section -->
     <div class="container mt-3 mb-4">
-      {% for category, message in get_flashed_messages(with_categories=True) %}
+      {% for category, message in messages %}
       <div class="notification is-{{ category }} is-dismissable">
         {{ message }}
         <button class="delete"></button>
@@ -67,7 +69,9 @@
       {% endfor %}
     </div>
     <!-- End flashes section -->
+    <!-- prettier-ignore -->
     {% endif %}
+    {% endwith %}
 
     <!-- Start page content -->
     {% block content %}{% endblock content %}

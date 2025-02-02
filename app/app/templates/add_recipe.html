@@ -89,15 +89,15 @@
           "X-CSRFToken": csfrToken,
         },
         body: JSON.stringify(jsonData),
+        redirect: "manual",
       })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-          // Handle success - maybe redirect or show a success message
+        .then((response) => {
+          // workaround for fecth redirect requesting the page twice and thus not showing the flash message
+          // TODO: make sure to change this url if something changes
+          window.location.href = "/";
         })
         .catch((error) => {
-          console.error("Error:", error);
-          // Handle error - maybe show an error message
+          console.error(error);
         });
     });
 </script>

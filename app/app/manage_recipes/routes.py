@@ -1,6 +1,6 @@
 import uuid
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app import csrf, db
@@ -12,7 +12,6 @@ manage_recipes = Blueprint("manage_recipes", __name__)
 
 @manage_recipes.route("/custom-recipe/add", methods=["GET", "POST"])
 @login_required
-@csrf.exempt  # TODO: controlla se si può rimuovere
 def add_custom_recipe():
     """
     Handle the addition of a custom recipe.
@@ -73,7 +72,8 @@ def add_custom_recipe():
 
         # this runs only if no exceptions were raised in the try block
         else:
-            return {"message": "Drink added successfully"}, 201
+            flash("Drink aggiunto con successo!", category="success")
+            return redirect(url_for("main.home"))
 
     else:
         return render_template("add_recipe.html")

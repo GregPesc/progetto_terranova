@@ -26,6 +26,13 @@ class AlcoholicType(enum.Enum):
     NON_ALCOHOLIC = "Non alcoholic"
     OPTIONAL_ALCOHOL = "Optional alcohol"
 
+    @classmethod
+    def _missing_(cls, value):
+        for member in cls:
+            if member.value.lower() == value.lower():
+                return member
+        return None
+
 
 class Category(enum.Enum):
     COCKTAIL = "Cocktail"
@@ -39,6 +46,13 @@ class Category(enum.Enum):
     HOMEMADE_LIQUEUR = "Homemade Liqueur"
     BEER = "Beer"
     SOFT_DRINK = "Soft Drink"
+
+    @classmethod
+    def _missing_(cls, value):
+        for member in cls:
+            if member.value.lower() == value.lower():
+                return member
+        return None
 
 
 # https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#setting-bi-directional-many-to-many

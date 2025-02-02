@@ -1,18 +1,18 @@
-from typing import Optional
+import enum
 
 from app.models import AlcoholicType, Category, Ingredient
 
 
-def validate_enum_value(value: str, enum_class) -> bool:
+def validate_enum_value(value, enum_class: enum.Enum) -> bool:
     """Validate if a value exists in an enum class."""
     try:
         enum_class(value)
-        return True  # noqa: TRY300
     except ValueError:
         return False
+    return True
 
 
-def validate_recipe_data(data: dict) -> tuple[bool, Optional[tuple]]:
+def validate_recipe_data(data: dict) -> tuple[bool, tuple | None]:
     """Validate the incoming recipe data."""
     drink_name = data.get("name")
     category = data.get("category")
@@ -64,4 +64,4 @@ def process_ingredients(
 
     ingredients = Ingredient.query.filter(Ingredient.id.in_(ids)).all()
 
-    return ingredients, dict(zip(ids, quantities))
+    return ingredients, dict(zip(ids, quantities, strict=True))

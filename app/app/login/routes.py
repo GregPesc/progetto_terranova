@@ -27,6 +27,7 @@ def login_route():
                 user.password, form.password.data
             ):
                 login_user(user, remember=form.remember.data)
+                flash("Login eseguito.", category="success")
                 return redirect(url_for("main.home"))
 
         flash("Credenziali invalide.", category="danger")
