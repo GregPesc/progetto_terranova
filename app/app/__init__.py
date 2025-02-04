@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import flask_login
 import flask_sqlalchemy
 import jinja2
@@ -28,6 +30,9 @@ def create_app(config_class=Config):
     app.jinja_env.autoescape = jinja2.select_autoescape()
     app.jinja_env.trim_blocks = True
     app.jinja_env.lstrip_blocks = True
+
+    # Create the necessary directories
+    Path.mkdir(Path(Config.UPLOAD_FOLDER), parents=True, exist_ok=True)
 
     db.init_app(app)
     login_manager.init_app(app)

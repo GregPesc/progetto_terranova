@@ -5,100 +5,152 @@
 {% block content %}
 <div class="container mt-5">
   <h2>Add Custom Recipe</h2>
-  <form id="add-recipe-form">
+  <form
+    method="POST"
+    action="{{ url_for('manage_recipes.add_custom_recipe') }}"
+    id="recipe-form"
+    enctype="multipart/form-data"
+  >
+    {{ form.hidden_tag() }}
     <div class="mb-3">
-      <label for="name" class="form-label">Drink Name</label>
-      <input type="text" class="form-control" id="name" name="name" required />
+      {{ form.name.label(class="form-label") }} {{
+      form.name(class="form-control") }}
     </div>
     <div class="mb-3">
-      <label for="category" class="form-label">Category</label>
-      <input
-        type="text"
-        class="form-control"
-        id="category"
-        name="category"
-        required
-      />
+      {{ form.category.label(class="form-label") }} {{
+      form.category(class="form-control") }}
     </div>
     <div class="mb-3">
-      <label for="alcoholic_type" class="form-label">Alcoholic Type</label>
-      <input
-        type="text"
-        class="form-control"
-        id="alcoholic_type"
-        name="alcoholic_type"
-        required
-      />
+      {{ form.alcoholic_type.label(class="form-label") }} {{
+      form.alcoholic_type(class="form-control") }}
     </div>
     <div class="mb-3">
-      <label for="instructions" class="form-label">Instructions</label>
-      <textarea
-        class="form-control"
-        id="instructions"
-        name="instructions"
-        rows="3"
-      ></textarea>
+      {{ form.instructions.label(class="form-label") }} {{
+      form.instructions(class="form-control") }}
     </div>
     <div class="mb-3">
-      <label for="thumbnail" class="form-label">Thumbnail URL</label>
-      <input type="text" class="form-control" id="thumbnail" name="thumbnail" />
+      {{ form.thumbnail.label(class="form-label") }} {{
+      form.thumbnail(class="form-control") }}
     </div>
+
     <div class="mb-3">
-      <label for="ingredients_ids" class="form-label"
-        >Ingredients IDs (comma separated)</label
-      >
-      <input
-        type="text"
-        class="form-control"
-        id="ingredients_ids"
-        name="ingredients_ids"
-      />
-    </div>
-    <div class="mb-3">
-      <label for="ingredients_quantities" class="form-label"
-        >Ingredients Quantities (comma separated)</label
-      >
-      <input
-        type="text"
-        class="form-control"
-        id="ingredients_quantities"
-        name="ingredients_quantities"
-      />
+      <label class="form-label">Ingredients</label>
+      <table class="table" id="ingredients-table">
+        <thead>
+          <tr>
+            <th>Ingredient</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ingredient_form in form.ingredients %}
+          <tr>
+            <td>
+              <div class="select">{{ ingredient_form.ingredient }}</div>
+            </td>
+            <td>{{ ingredient_form.quantity(class="input") }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
     <button type="submit" class="btn btn-primary">Add Recipe</button>
   </form>
 </div>
 
 <script>
-  let csfrToken = "{{ csrf_token() }}";
-  document
-    .getElementById("add-recipe-form")
-    .addEventListener("submit", function (event) {
-      event.preventDefault();
+  document.addEventListener("DOMContentLoaded", function () {
+    const ingredientsTableBody = document.querySelector(
+      "#ingredients-table tbody"
+    );
 
-      const formData = new FormData(this);
-      const jsonData = {};
-      formData.forEach((value, key) => {
-        jsonData[key] = value;
+    // Add new function to update indexes
+    function updateIndexes() {
+      const rows = ingredientsTableBody.querySelectorAll("tr");
+      rows.forEach((row, index) => {
+        const select = row.querySelector("select");
+        const input = row.querySelector("input");
+
+        select.id = `ingredients-${index}-ingredient`;
+        select.name = `ingredients-${index}-ingredient`;
+        input.id = `ingredients-${index}-quantity`;
+        input.name = `ingredients-${index}-quantity`;
       });
+    }
 
-      fetch("/custom-recipe/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": csfrToken,
-        },
-        body: JSON.stringify(jsonData),
-        redirect: "manual",
-      })
-        .then((response) => {
-          // workaround for fecth redirect requesting the page twice and thus not showing the flash message
-          // TODO: make sure to change this url if something changes
-          window.location.href = "/";
-        })
-        .catch((error) => {
-          console.error(error);
+    // Function to attach change listener to a select element.
+    function attachListener(selectElement) {
+      selectElement.addEventListener("change", function (event) {
+        // If this select is in the last row and is non-empty add a new row
+        const rows = ingredientsTableBody.querySelectorAll("tr");
+        const lastRowSelect = rows[rows.length - 1].querySelector("select");
+        if (lastRowSelect === event.target && event.target.value !== "") {
+          addEmptyRow();
+        }
+
+        // Remove all empty rows except the last one
+        const allSelects = ingredientsTableBody.querySelectorAll("select");
+        const emptyRows = [];
+
+        // Gather all empty rows
+        allSelects.forEach((select) => {
+          if (select.value === "") {
+            emptyRows.push(select.closest("tr"));
+          }
         });
-    });
+
+        // Keep only the last empty row, remove others
+        if (emptyRows.length > 1) {
+          emptyRows.slice(0, -1).forEach((row) => row.remove());
+          updateIndexes(); // Update indexes after removing rows
+        }
+      });
+    }
+
+    // Function to add an empty ingredients row.
+    function addEmptyRow() {
+      const index = ingredientsTableBody.querySelectorAll("tr").length;
+      const newRow = document.createElement("tr");
+
+      // Clone the first row's select and input elements
+      const firstRowSelect = document
+        .querySelector("#ingredients-0-ingredient")
+        .cloneNode(true);
+      const firstRowInput = document
+        .querySelector("#ingredients-0-quantity")
+        .cloneNode(true);
+
+      // Update IDs and names for the new elements
+      firstRowSelect.id = `ingredients-${index}-ingredient`;
+      firstRowSelect.name = `ingredients-${index}-ingredient`;
+      firstRowInput.id = `ingredients-${index}-quantity`;
+      firstRowInput.name = `ingredients-${index}-quantity`;
+
+      // Clear the selected value
+      firstRowSelect.value = "";
+      firstRowInput.value = "";
+
+      newRow.innerHTML = `
+        <td>
+          <div class="select"></div>
+        </td>
+        <td></td>
+      `;
+
+      // Append the cloned elements to the new row
+      newRow.querySelector(".select").appendChild(firstRowSelect);
+      newRow.querySelector("td:last-child").appendChild(firstRowInput);
+
+      ingredientsTableBody.appendChild(newRow);
+      attachListener(firstRowSelect);
+    }
+
+    // Attach listeners to all existing select fields.
+    document
+      .querySelectorAll("#ingredients-table tbody select")
+      .forEach(function (selectElem) {
+        attachListener(selectElem);
+      });
+  });
 </script>
 {% endblock %}
