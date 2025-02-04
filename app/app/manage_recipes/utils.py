@@ -1,5 +1,8 @@
 import enum
 
+from werkzeug.datastructures import ImmutableMultiDict
+
+from app import db
 from app.models import AlcoholicType, Category, Ingredient
 
 
@@ -12,8 +15,12 @@ def validate_enum_value(value, enum_class: enum.Enum) -> bool:
     return True
 
 
-def validate_recipe_data(data: dict) -> tuple[bool, tuple | None]:
-    """Validate the incoming recipe data."""
+def validate_recipe_data(data: ImmutableMultiDict) -> tuple[bool, tuple | None]:
+    """
+    Validate the incoming recipe data.
+
+    Return whether the data is valid and if not an error response.
+    """
     drink_name = data.get("name")
     category = data.get("category")
     alcoholic_type = data.get("alcoholic_type")
@@ -41,27 +48,45 @@ def validate_recipe_data(data: dict) -> tuple[bool, tuple | None]:
 
 
 def process_ingredients(
-    ingredients_ids: str, ingredients_quantities: str
-) -> tuple[list[Ingredient], dict[int, str | None]]:
-    """Process and validate ingredients data."""
+    ingredients_ids: list[str], ingredients_quantities: list[str]
+) -> dict[Ingredient, str | None] | None:
+    """
+    Validate ingredients and quantities.
+
+    Raise ValueError if they are invalid.
+
+    Return a dict that associates ingredient ids to their quantity.
+    """
+    # NOTE: if an ingredient is present multiple times the last occurrence will be the only one actually considered,
+    # as in it will overwrite the precedent occurrences
+
+    # If we got no ingredient ids we can early return None
     if not ingredients_ids:
-        return [], {}
+        return None
 
+    # Check that both lists have the same length
+    if len(ingredients_ids) != len(ingredients_quantities):
+        raise ValueError("Ingredients and quantities must have the same length")  # noqa: TRY003
+
+    # Check that all ingredients are not Falsy values (empty strings)
+    if not all(ingredients_ids):
+        raise ValueError("Invalid ingredient IDs")  # noqa: TRY003
+
+    # Convert empty strings to None
+    quantities = [q if q.strip() else None for q in ingredients_quantities]
+
+    # try to convert every id into an integer
     try:
-        ids = [int(id_drink) for id_drink in ingredients_ids.split(",")]
-        quantities = ingredients_quantities.split(",") if ingredients_quantities else []
-
-        if len(ids) != len(quantities):
-            raise ValueError("Ingredients and quantities must have the same length")  # noqa: TRY003
-
-        # Convert empty strings to None
-        quantities = [q if q.strip() else None for q in quantities]
-
-    except ValueError as e:
-        if str(e) == "Ingredients and quantities must have the same length":
-            raise
+        ids = list(map(int, ingredients_ids))
+    except ValueError:
         raise ValueError("Invalid ingredient IDs") from None  # noqa: TRY003
 
-    ingredients = Ingredient.query.filter(Ingredient.id.in_(ids)).all()
+    # get the actual ingredient objects from the db
+    # implemented like this to not break if there are duplicates
+    ingredients: list[Ingredient] = [db.session.get_one(Ingredient, i) for i in ids]
 
-    return ingredients, dict(zip(ids, quantities, strict=True))
+    # when wtforms validates the data submitted it automatically checks
+    # that the value of a select is one of those sent to the client
+    # so checking if the user can access the ingredient is not needed
+
+    return dict(zip(ingredients, quantities, strict=True))
