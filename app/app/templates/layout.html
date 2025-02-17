@@ -1,83 +1,86 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Applicazione." />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/bulma.min.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/styles.css') }}"
-    />
-    <!-- start head block -->
-    {% block head %}{% endblock head %}
-    <!-- end head block -->
 
-    {% if title %}
-    <title>{{ title }}</title>
-    {% else %}
-    <title>Applicazione</title>
-    {% endif %}
-  </head>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Applicazione." />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bulma.min.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <link rel="manifest" href="/manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register("/sw.js").then(function (registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function (err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+  </script>
+  <!-- start head block -->
+  {% block head %}{% endblock head %}
+  <!-- end head block -->
 
-  <body>
-    <nav class="navbar is-white">
-      <div class="container">
-        <div class="navbar-menu">
-          <div class="navbar-start">
-            <img
-              src="{{ url_for('static', filename='images/resultlogo.png') }}"
-              style="width: 80px; height: 100x"
-            />
-            <a class="navbar-item" href="#">Drink a Drink</a>
-          </div>
-          <a class="navbar-item" href="#">Home</a>
-          <a class="navbar-item" href="#">Catalogo</a>
-          <a class="navbar-item" href="#">Mybar</a>
-          <a class="navbar-item" href="#">Preferiti</a>
-          <div class="navbar-end">
-            <div class="navbar-item">
-              <div class="buttons">
-                <a class="button is-light">
-                  <span class="icon">
-                    <img
-                      src="{{ url_for('static', filename='images/icona_account.png') }}"
-                    />
-                  </span>
-                  <span>Accedi</span>
-                </a>
-              </div>
+  {% if title %}
+  <title>{{ title }}</title>
+  {% else %}
+  <title>Applicazione</title>
+  {% endif %}
+</head>
+
+<body>
+  <nav class="navbar is-white">
+    <div class="container">
+      <div class="navbar-menu">
+        <div class="navbar-start">
+          <img src="{{ url_for('static', filename='images/resultlogo.png') }}" style="width: 80px; height: 100x" />
+          <a class="navbar-item" href="#">Drink a Drink</a>
+        </div>
+        <a class="navbar-item" href="#">Home</a>
+        <a class="navbar-item" href="#">Catalogo</a>
+        <a class="navbar-item" href="#">Mybar</a>
+        <a class="navbar-item" href="#">Preferiti</a>
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              <a class="button is-light">
+                <span class="icon">
+                  <img src="{{ url_for('static', filename='images/icona_account.png') }}" />
+                </span>
+                <span>Accedi</span>
+              </a>
             </div>
           </div>
         </div>
       </div>
-    </nav>
-
-    <!-- prettier-ignore -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <!-- Start flashes section -->
-    <div class="container mt-3 mb-4">
-      {% for category, message in messages %}
-      <div class="notification is-{{ category }} is-dismissable">
-        {{ message }}
-        <button class="delete"></button>
-      </div>
-      {% endfor %}
     </div>
-    <!-- End flashes section -->
-    <!-- prettier-ignore -->
-    {% endif %}
-    {% endwith %}
+  </nav>
 
-    <!-- Start page content -->
-    {% block content %}{% endblock content %}
-    <!-- End page content -->
+  <!-- prettier-ignore -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <!-- Start flashes section -->
+  <div class="container mt-3 mb-4">
+    {% for category, message in messages %}
+    <div class="notification is-{{ category }} is-dismissable">
+      {{ message }}
+      <button class="delete"></button>
+    </div>
+    {% endfor %}
+  </div>
+  <!-- End flashes section -->
+  <!-- prettier-ignore -->
+  {% endif %}
+  {% endwith %}
 
-    <script src="{{ url_for('static', filename='js/htmx.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-  </body>
+  <!-- Start page content -->
+  {% block content %}{% endblock content %}
+  <!-- End page content -->
+
+  <script src="{{ url_for('static', filename='js/htmx.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+
 </html>
