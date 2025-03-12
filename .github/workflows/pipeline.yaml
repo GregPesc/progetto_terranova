@@ -1,0 +1,71 @@
+name: pipeline
+on:
+  push:
+    branches:
+      - "docker"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: https://ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image app
+        uses: docker/build-push-action@v6
+        with:
+          context: ./app
+          push: true
+          tags: |
+            ghcr.io/gregpesc/progetto_terranova-app:latest
+            ghcr.io/gregpesc/progetto_terranova-app:${{ github.sha }}
+
+      - name: Build and push Docker image caddy
+        uses: docker/build-push-action@v6
+        with:
+          context: ./caddy
+          push: true
+          tags: |
+            ghcr.io/gregpesc/progetto_terranova-caddy:latest
+            ghcr.io/gregpesc/progetto_terranova-caddy:${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-push-image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: create env file
+        run: |
+          echo "GIT_COMMIT_HASH=${{ github.sha }}" >> ./envfile
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: "207.154.221.248"
+          username: user
+          key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          script: |
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            cd ~/progetto_terranova
+            git checkout docker
+            git pull
+            docker pull ghcr.io/gregpesc/progetto_terranova-app:latest
+            docker pull ghcr.io/gregpesc/progetto_terranova-caddy:latest
+            docker compose down
+            docker compose up -d
