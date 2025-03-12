@@ -1,14 +1,14 @@
-# Deploy con Docker
+# Sviluppo locale con Docker
 
 ## Requisiti
 
 - git
 - Docker
 
-## Deploy
+## Comandi
 
 ```
 git clone https://github.com/GregPesc/progetto_terranova.git
 cd progetto_terranova
-docker compose up -d --build
+docker compose -f .\docker-compose-dev.yml up -d --build
 ```
