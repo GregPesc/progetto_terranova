@@ -1,0 +1,36 @@
+name: drink-a-drink
+
+services:
+  app:
+    hostname: app
+    container_name: app
+    build: app
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --silent --fail localhost:8080/healthcheck || exit 1",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    # command: "gunicorn --bind 0.0.0.0:8080 run:app"
+
+  caddy:
+    hostname: caddy
+    container_name: caddy
+    build: caddy
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
