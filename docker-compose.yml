@@ -15,6 +15,9 @@ services:
       interval: 10s
       timeout: 10s
       retries: 3
+    volumes:
+      - database:/deploy-dir/instance
+      - uploads:/deploy-dir/app/uploads
     # command: "gunicorn --bind 0.0.0.0:8080 run:app"
 
   caddy:
@@ -22,6 +25,9 @@ services:
     hostname: caddy
     container_name: caddy
     restart: always
+    environment:
+      - TZ=Europe/Rome
+      - MY_DOMAIN=drinkadrink.me
     depends_on:
       - app
     ports:
@@ -34,3 +40,5 @@ services:
 volumes:
   caddy_data:
   caddy_config:
+  database:
+  uploads:
