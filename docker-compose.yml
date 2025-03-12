@@ -2,10 +2,10 @@ name: drink-a-drink
 
 services:
   app:
+    image: ghcr.io/gregpesc/progetto_terranova-app:latest
     hostname: app
     container_name: app
     restart: always
-    build: app
     healthcheck:
       test:
         [
@@ -18,10 +18,10 @@ services:
     # command: "gunicorn --bind 0.0.0.0:8080 run:app"
 
   caddy:
+    image: ghcr.io/gregpesc/progetto_terranova-caddy:latest
     hostname: caddy
     container_name: caddy
     restart: always
-    build: caddy
     depends_on:
       - app
     ports:
