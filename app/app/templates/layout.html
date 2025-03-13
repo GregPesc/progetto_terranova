@@ -24,32 +24,47 @@
   </head>
 
   <body>
-    <nav class="navbar is-white">
-      <div class="container">
-        <div class="navbar-menu">
-          <div class="navbar-start">
-            <img
-              src="{{ url_for('static', filename='images/resultlogo.png') }}"
-              style="width: 80px; height: 100x"
-            />
-            <a class="navbar-item" href="#">Drink a Drink</a>
-          </div>
+    <nav class="navbar is-white" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="drinkadrink.me">
+          <img
+            src="{{ url_for('static', filename='images/resultlogo.png') }}"
+          />
+        </a>
+
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="mainNavbarMenu"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="navbar-menu" id="mainNavbarMenu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="#">Drink a Drink</a>
           <a class="navbar-item" href="#">Home</a>
           <a class="navbar-item" href="#">Catalogo</a>
           <a class="navbar-item" href="#">Mybar</a>
           <a class="navbar-item" href="#">Preferiti</a>
-          <div class="navbar-end">
-            <div class="navbar-item">
-              <div class="buttons">
-                <a class="button is-light">
-                  <span class="icon">
-                    <img
-                      src="{{ url_for('static', filename='images/icona_account.png') }}"
-                    />
-                  </span>
-                  <span>Accedi</span>
-                </a>
-              </div>
+        </div>
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              <a class="button is-light">
+                <span class="icon">
+                  <img
+                    src="{{ url_for('static', filename='images/icona_account.png') }}"
+                  />
+                </span>
+                <span>Accedi</span>
+              </a>
             </div>
           </div>
         </div>
