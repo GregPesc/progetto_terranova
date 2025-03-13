@@ -1,0 +1,138 @@
+body {
+  background-color: #eaf7f7;
+}
+
+.section {
+  padding: 10 !important;
+}
+
+.title-custom {
+  color: #ff3c3c;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 3rem;
+}
+
+.search-bar {
+  margin: 1rem auto;
+  max-width: 600px;
+}
+
+.card-custom {
+  background-color: #eaf7f7;
+  border: 1px solid #d4d4d4;
+  border-radius: 10px;
+  text-align: center;
+  padding: 1rem;
+}
+
+.card-custom img {
+  border-radius: 5px;
+}
+
+.title-custom-card {
+  color: #ff3c3c;
+  font-weight: bold;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.buttons-container button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.is-clicked-heart {
+  color: white !important;
+  background-color: #ff3860 !important; /* Rosso per il cuore */
+}
+
+.is-clicked-pencil {
+  color: white !important;
+  background-color: #23d160 !important; /* Verde per la matita */
+}
+
+.fixed-button {
+  position: fixed !important;
+  bottom: 60px;
+  right: 60px; /*per metterlo tutto a destra*/
+  z-index: 1000; /*per metterlo sopra a tutti gli elementi*/
+}
+
+#filterPanel {
+  position: fixed;
+  top: 0;
+  right: -10000px;
+  width: min(450px, 100vw);
+  height: 100vh;
+  display: flex;
+  background-color: #f5f5f5;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+  padding: 1rem;
+  overflow-y: scroll;
+}
+
+.delete.is-pulled-right {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+#filterPanel.is-visible {
+  right: 0; /* Mostra il pannello */
+  z-index: 2000; /*per metterlo sopra a tutti gli elementi*/
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Colore scuro traslucido */
+  z-index: 1999; /* Assicurati che sia sotto al pannello */
+  display: none; /* Nascondi inizialmente */
+}
+
+.overlay.is-visible {
+  display: block; /* Mostra overlay quando visibile */
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.is-active {
+  display: flex;
+}
+
+.card-custom-modal {
+  background-color: #eaf7f7;
+  border: 1px solid #d4d4d4;
+  border-radius: 10px;
+  text-align: center;
+  padding: 1rem;
+  height: 60%;
+  width: 20%;
+}
+
+#bottonemodale {
+  position: absolute;
+  top: 100px;
+  right: 580px;
+}
