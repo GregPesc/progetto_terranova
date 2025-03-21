@@ -16,6 +16,8 @@ class Base(sqlalchemy.orm.DeclarativeBase):
 
 db = flask_sqlalchemy.SQLAlchemy(model_class=Base)
 login_manager = flask_login.LoginManager()
+login_manager.login_view = "login.login_route"
+login_manager.login_message_category = "info"
 csrf = CSRFProtect()
 
 from .models import *  # noqa: E402, F403
