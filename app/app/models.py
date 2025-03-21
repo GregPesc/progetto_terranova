@@ -127,6 +127,7 @@ class Ingredient(db.Model):
         return f"<Ingredient id={self.id}, name={self.name}, drinks={self.drinks}, user_id={self.user_id}>"
 
 
+# TODO: Split favorites in 2 seperate tables? Currently broken
 class Favorite(db.Model):
     __tablename__ = "Favorite"
 

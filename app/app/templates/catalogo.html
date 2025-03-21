@@ -51,7 +51,11 @@
         <div class="card card-custom">
           <div class="card-image">
             <figure class="image is-square">
-              <img src="{{ drink.thumbnail }}" alt="{{ drink.name }}" />
+              <img
+                loading="lazy"
+                src="{{ drink.thumbnail }}"
+                alt="{{ drink.name }}"
+              />
             </figure>
           </div>
           <div class="card-content">
@@ -62,7 +66,11 @@
                   <i class="fas fa-pencil-alt"></i>
                 </span>
               </button>
-              <button class="heart-button">
+              <button
+                class="heart-button"
+                hx-post="{{ url_for('favorite.toggle_user_favorite', favorite_id=drink.id) }}"
+                hx-swap="none"
+              >
                 <span class="icon">
                   <i class="fas fa-heart"></i>
                 </span>
