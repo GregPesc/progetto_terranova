@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import flask_login
@@ -56,5 +57,11 @@ def create_app(config_class=Config):
 
     with app.app_context():
         db.create_all()
-
+        if db.session.query(ApiDrink).first() is None:  # noqa: F405
+            # load all api drink from file if table is empty
+            with Path.open(Config.BASE_DIR / "static" / "filtered_drinks.json") as file:
+                data_list = json.load(file)
+            objects = [ApiDrink(**data) for data in data_list]  # noqa: F405
+            db.session.bulk_save_objects(objects)
+            db.session.commit()
     return app
