@@ -26,7 +26,7 @@
   <body>
     <nav class="navbar is-white" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        <a class="navbar-item" href="drinkadrink.me">
+        <a class="navbar-item" href="{{ url_for('main.home') }}">
           <img
             src="{{ url_for('static', filename='images/resultlogo.png') }}"
           />
@@ -48,11 +48,12 @@
 
       <div class="navbar-menu" id="mainNavbarMenu">
         <div class="navbar-start">
-          <a class="navbar-item" href="#">Drink a Drink</a>
-          <a class="navbar-item" href="#">Home</a>
-          <a class="navbar-item" href="#">Catalogo</a>
+          <a class="navbar-item" href="{{ url_for('main.home') }}">Home</a>
+          <a class="navbar-item" href="{{ url_for('main.catalogo') }}"
+            >Catalogo</a
+          >
+          <!-- TODO: fix this link when the page is merged -->
           <a class="navbar-item" href="#">Mybar</a>
-          <a class="navbar-item" href="#">Preferiti</a>
         </div>
         <div class="navbar-end">
           <div class="navbar-item">
