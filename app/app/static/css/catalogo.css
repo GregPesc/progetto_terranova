@@ -49,13 +49,11 @@ body {
 }
 
 .is-clicked-heart {
-  color: white !important;
-  background-color: #ff3860 !important; /* Rosso per il cuore */
+  color: #ff3860;
 }
 
 .is-clicked-pencil {
-  color: white !important;
-  background-color: #23d160 !important; /* Verde per la matita */
+  color: #23d160;
 }
 
 .fixed-button {

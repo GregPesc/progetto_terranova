@@ -67,8 +67,8 @@
                 </span>
               </button>
               <button
-                class="heart-button"
-                hx-post="{{ url_for('favorite.toggle_user_favorite', favorite_id=drink.id) }}"
+                class="heart-button {{ 'is-clicked-heart' if favorites[drink.id] }}"
+                hx-post="{{ url_for('favorite.toggle_user_api_favorite', favorite_id=drink.id) }}"
                 hx-swap="none"
               >
                 <span class="icon">

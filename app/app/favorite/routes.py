@@ -2,95 +2,56 @@ from flask import Blueprint
 from flask_login import current_user, login_required
 
 from app import db
-from app.models import Favorite
+from app.favorite.utils import is_api_favorite, is_local_favorite
+from app.models import ApiFavorite, LocalFavorite
 
 favorite = Blueprint("favorite", __name__)
 
 
-# Route per ottenere tutti i preferiti per un utente
-@favorite.route("/api/favorite", methods=["GET"])
+# TODO: make the client redirect to login page when it tries to add favorites without being logged in https://htmx.org/headers/hx-redirect/
+@favorite.route("/api/favorite/api/<int:favorite_id>/toggle", methods=["POST"])
 @login_required
-def get_user_favorites():
-    # Filtra i preferiti per l'utente corrente
-    favorites = (
-        db.session.execute(
-            db.select(Favorite)
-            .filter(Favorite.user_id == current_user.id)
-            .order_by(Favorite.drink_id)
-        )
-        .scalars()
-        .all()
-    )
-
-    return {
-        "favorites": [
-            {"id": favorite.id, "name": favorite.name, "thumbnail": favorite.thumbnail}
-            for favorite in favorites
-        ]
-    }
-
-
-# Route per eliminare un preferito
-@favorite.route("/api/favorite/<int:favorite_id>", methods=["DELETE"])
-@login_required
-def delete_user_favorite(favorite_id):
+def toggle_user_api_favorite(favorite_id: int):
     # Trova il preferito per l'utente corrente
-    favorite = db.session.execute(
-        db.select(Favorite).filter(
-            Favorite.id == favorite_id, Favorite.user_id == current_user.id
-        )
-    ).scalar_one_or_none()
+    favorite = is_api_favorite(favorite_id, current_user)
 
-    if favorite is None:
-        return {"error": "Favorite not found"}, 404
-
-    db.session.delete(favorite)
-    db.session.commit()
-
-    return {"message": "Favorite deleted"}
-
-
-# Route per aggiungere un preferito
-@favorite.route("/api/favorite/<int:favorite_id>", methods=["POST"])
-@login_required
-def add_user_favorite(favorite_id):
-    # Trova il preferito per l'utente corrente
-    favorite = db.session.execute(
-        db.select(Favorite).filter(
-            Favorite.id == favorite_id, Favorite.user_id == current_user.id
-        )
-    ).scalar_one_or_none()
-
-    if favorite is None:
-        return {"error": "Favorite not found"}, 404
-
-    # Aggiungi il preferito all'utente
-    current_user.favorites.append(favorite)
-    db.session.commit()
-
-    return {"message": "Favorite added"}
-
-
-# make a toggle favorite route
-@favorite.route("/api/favorite/<int:favorite_id>/toggle", methods=["POST"])
-@login_required
-def toggle_user_favorite(favorite_id):
-    # Trova il preferito per l'utente corrente
-    favorite = db.session.execute(
-        db.select(Favorite).filter(
-            Favorite.id == favorite_id, Favorite.user_id == current_user.id
-        )
-    ).scalar_one_or_none()
-
-    if favorite is None:
-        return {"error": "Favorite not found"}, 404
-
-    # check if the favorite is already in the user's favorites
-    if favorite in current_user.favorites:
-        current_user.favorites.remove(favorite)
+    if not favorite:
+        # Se il preferito non esiste, aggiungi il nuovo preferito
+        new_favorite = ApiFavorite(id=favorite_id, user=current_user)
+        db.session.add(new_favorite)
         db.session.commit()
-        return {"message": "Favorite removed"}
+        return {"message": "Favorite added"}
 
-    current_user.favorites.append(favorite)
+    # Se il preferito esiste, rimuovilo
+    obj = (
+        db.session.query(ApiFavorite)
+        .filter_by(id=favorite_id, user_id=current_user.id)
+        .first()
+    )
+    db.session.delete(obj)
     db.session.commit()
-    return {"message": "Favorite added"}
+    return {"message": "Favorite removed"}
+
+
+@favorite.route("/api/favorite/local/<uuid:favorite_id>/toggle", methods=["POST"])
+@login_required
+def toggle_user_local_favorite(favorite_id):
+    # Trova il preferito per l'utente corrente
+    favorite = is_local_favorite(favorite_id, current_user)
+
+    if not favorite:
+        # Se il preferito non esiste, aggiungi il nuovo preferito
+        new_favorite = LocalFavorite(id=favorite_id, user=current_user)
+        db.session.add(new_favorite)
+        db.session.commit()
+        return {"message": "Favorite added"}
+
+    # Se il preferito esiste, rimuovilo
+    obj = (
+        db.session.query(LocalFavorite())
+        .filter_by(id=favorite_id, user_id=current_user.id)
+        .first()
+    )
+    db.session.delete(obj)
+    db.session.commit()
+    return {"message": "Favorite removed"}

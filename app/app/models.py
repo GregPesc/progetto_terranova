@@ -4,7 +4,7 @@ import enum
 import uuid
 
 from flask_login import UserMixin
-from sqlalchemy import Boolean, Column, ForeignKey, String
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app import db, login_manager
@@ -82,7 +82,10 @@ class User(db.Model, UserMixin):
     user_drinks: Mapped[list[UserDrink]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
-    user_favorites: Mapped[list[Favorite]] = relationship(
+    user_apifavorites: Mapped[list[ApiFavorite]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
+    user_localfavorites: Mapped[list[LocalFavorite]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
     user_custom_ingredients: Mapped[list[Ingredient]] = relationship(
@@ -127,16 +130,27 @@ class Ingredient(db.Model):
         return f"<Ingredient id={self.id}, name={self.name}, drinks={self.drinks}, user_id={self.user_id}>"
 
 
-# TODO: Split favorites in 2 seperate tables? Currently broken
-class Favorite(db.Model):
-    __tablename__ = "Favorite"
+class ApiFavorite(db.Model):
+    __tablename__ = "ApiFavorite"
 
-    drink_id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
-    is_local: Mapped[bool] = mapped_column(
-        Boolean(create_constraint=True), primary_key=True
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("User.id"), nullable=False, primary_key=True
     )
-    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), nullable=False)
-    user: Mapped[User] = relationship(back_populates="user_favorites")
+    user: Mapped[User] = relationship(back_populates="user_apifavorites")
 
     def __repr__(self):
-        return f"<Favorite drink_id={self.drink_id}, is_local={self.is_local}, user_id={self.user_id}>"
+        return f"<ApiFavorite id={self.id}, user_id={self.user_id}>"
+
+
+class LocalFavorite(db.Model):
+    __tablename__ = "LocalFavorite"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("User.id"), nullable=False, primary_key=True
+    )
+    user: Mapped[User] = relationship(back_populates="user_localfavorites")
+
+    def __repr__(self):
+        return f"<Favorite id={self.id}, user_id={self.user_id}>"
