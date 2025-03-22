@@ -64,4 +64,16 @@ def create_app(config_class=Config):
             objects = [ApiDrink(**data) for data in data_list]  # noqa: F405
             db.session.bulk_save_objects(objects)
             db.session.commit()
+        if db.session.query(Ingredient).first() is None:  # noqa: F405
+            # load all ingredients from file if table is empty
+            with Path.open(
+                Config.BASE_DIR / "static" / "base_ingredients.json"
+            ) as file:
+                data_list = json.load(file)
+            new_ingredients = [
+                Ingredient(name=ingredient["strIngredient1"])  # noqa: F405
+                for ingredient in data_list["drinks"]
+            ]
+            db.session.bulk_save_objects(new_ingredients)
+            db.session.commit()
     return app
