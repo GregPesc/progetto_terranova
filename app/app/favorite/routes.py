@@ -1,3 +1,5 @@
+import uuid
+
 from flask import Blueprint
 from flask_login import current_user, login_required
 
@@ -33,9 +35,14 @@ def toggle_user_api_favorite(favorite_id: int):
     return {"message": "Favorite removed"}
 
 
-@favorite.route("/api/favorite/local/<uuid:favorite_id>/toggle", methods=["POST"])
+@favorite.route("/api/favorite/local/<string:favorite_id>/toggle", methods=["POST"])
 @login_required
 def toggle_user_local_favorite(favorite_id):
+    try:
+        favorite_id = uuid.UUID(favorite_id, version=4)
+    except ValueError:
+        return {"error": "Invalid drink_id"}, 400
+
     # Trova il preferito per l'utente corrente
     favorite = is_local_favorite(favorite_id, current_user)
 
@@ -48,7 +55,7 @@ def toggle_user_local_favorite(favorite_id):
 
     # Se il preferito esiste, rimuovilo
     obj = (
-        db.session.query(LocalFavorite())
+        db.session.query(LocalFavorite)
         .filter_by(id=favorite_id, user_id=current_user.id)
         .first()
     )

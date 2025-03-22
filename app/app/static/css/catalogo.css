@@ -134,3 +134,7 @@ body {
   top: 100px;
   right: 580px;
 }
+
+figure.image img {
+  object-fit: cover;
+}
