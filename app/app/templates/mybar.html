@@ -1,0 +1,426 @@
+{% extends "layout.html" %} {% block head %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/catalogo.css')}}"
+/>
+{% endblock head%} {% block content %}
+
+<h1 class="title title-custom">Catalogo</h1>
+
+<!--Barra di ricerca-->
+<div class="field search-bar p-3">
+  <p class="control has-icons-left has-icons-right is-flex">
+    <input
+      class="input"
+      class="input is-expanded"
+      type="text"
+      placeholder="cerca qui"
+      style="padding-right: 3rem"
+    />
+
+    <!-- Icona a sinistra -->
+    <span class="icon is-left">
+      <i class="fas fa-search"></i>
+    </span>
+
+    <!-- Icona a destra -->
+    <span class="field is-grouped is-grouped-right">
+      <button
+        class="button is-right"
+        id="toggleFilters"
+        style="border: none; background: white"
+      >
+        <span class="icon">
+          <i class="fas fa-sliders-h"></i>
+        </span>
+      </button>
+    </span>
+  </p>
+</div>
+
+<!--Bottone per aggiungere un drink-->
+<div class="is-flex is-justify-content-center">
+  <a
+    href="{{ url_for('manage_recipes.add_custom_recipe') }}"
+    class="button is-primary"
+  >
+    Aggiungi un drink
+  </a>
+</div>
+
+<!--sezione card-->
+<section class="section">
+  <div class="container">
+    <div class="columns is-multiline is-centered">
+      {% for drink in drinks %}
+      <div class="column is-one-third">
+        <div class="card card-custom">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img
+                loading="lazy"
+                src="{% if drink.thumbnail %}{{ url_for('main.uploaded_file', filename=drink.thumbnail) }}{% endif %}"
+                alt="{{ drink.name }}"
+              />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">{{ drink.name }}</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pencil-alt"></i>
+                </span>
+              </button>
+              <button
+                class="heart-button {{ 'is-clicked-heart' if favorites[drink.id] }}"
+                hx-post="{{ url_for('favorite.toggle_user_local_favorite', favorite_id=drink.id) }}"
+                hx-swap="none"
+              >
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<div class="overlay"></div>
+
+<!-- Pannello dei filtri -->
+<div id="filterPanel" class="container">
+  <div class="container">
+    <h2 class="title is-4" style="color: black">Filtri :</h2>
+    <button id="closeFilters" class="delete is-pulled-right"></button>
+    <div class="field search-bar">
+      <div class="control has-icons-left has-icons-right is-flex">
+        <input class="input is-expanded" type="text" placeholder="Cerca..." />
+        <!-- Icona a sinistra -->
+        <span class="icon is-left">
+          <i class="fas fa-search"></i>
+        </span>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Gin </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Gin </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Gin </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Gin </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Gin </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Gin </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Gin </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Gin </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Gin </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+      <div class="cell">
+        <label class="checkbox"> <input type="checkbox" /> Vodka </label>
+      </div>
+    </div>
+    <!-- Pulsanti -->
+
+    <button class="button is-success mr-1 mb-5">Applica</button>
+    <button class="button is-danger is-light mb-5">Annulla</button>
+  </div>
+</div>
+
+<!-- Bottone dado -->
+<button class="button is-primary is-large fixed-button" id="diceButton">
+  <span class="icon is-large">
+    <i class="fas fa-dice"></i>
+    <!-- Icona dado -->
+  </span>
+</button>
+
+<!--modale card casual drink-->
+<div class="modal" id="modal">
+  <div class="modal-background">
+    <button id="bottonemodale" class="delete is-pulled-right"></button>
+  </div>
+  <div class="card card-custom-modal">
+    <div class="card-image">
+      <figure class="image is-square">
+        <img
+          src="https://via.placeholder.com/150x150?text=Negroni"
+          alt="Negroni"
+        />
+      </figure>
+    </div>
+    <div class="card-content">
+      <hr />
+      <p class="title is-5 title-custom-card">NEGRONI</p>
+      <p href="#" class="link">
+        Scopri il drink<span class="icon is-small" style="margin-left: 0.5rem">
+          <i class="fas fa-arrow-right"></i>
+        </span>
+      </p>
+    </div>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/catalogo.js') }}"></script>
+{% endblock content %}

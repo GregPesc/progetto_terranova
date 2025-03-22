@@ -109,30 +109,17 @@ def add_custom_recipe():
     return render_template("add_recipe.html", form=form)
 
 
-@manage_recipes.route("/custom-recipe/delete", methods=["POST"])
+@manage_recipes.route("/custom-recipe/<string:drink_id>/delete", methods=["POST"])
 @login_required
-@csrf.exempt  # TODO: controlla se si può rimuovere
-def delete_custom_recipe():
+def delete_custom_recipe(drink_id):
     """
     Handle the deletion of a custom recipe.
-
-    Input: POST request with mimetype application/json
-
-    {
-        "drink_id": UUID  # ID of the drink to delete
-    }
     """
-
-    data: dict = request.json
-    drink_id = data.get("drink_id")
 
     try:
         drink_id = uuid.UUID(drink_id, version=4)
     except ValueError:
         return {"error": "Invalid drink_id"}, 400
-
-    if not drink_id:
-        return {"error": "Missing drink_id"}, 400
 
     drink = UserDrink.query.get(drink_id)
 
