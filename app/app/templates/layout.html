@@ -52,13 +52,28 @@
           <a class="navbar-item" href="{{ url_for('main.catalogo') }}"
             >Catalogo</a
           >
-          <!-- TODO: fix this link when the page is merged -->
-          <a class="navbar-item" href="#">Mybar</a>
+          <a class="navbar-item" href="{{ url_for('main.mybar') }}">MyBar</a>
         </div>
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <a class="button is-light">
+              {% if current_user.is_authenticated %}
+              <a
+                class="button is-light"
+                href="{{ url_for('login.logout_route')}}"
+              >
+                <span class="icon">
+                  <img
+                    src="{{ url_for('static', filename='images/icona_account.png') }}"
+                  />
+                </span>
+                <span>Logout</span>
+              </a>
+              {% else %}
+              <a
+                class="button is-light"
+                href="{{ url_for('login.login_route')}}"
+              >
                 <span class="icon">
                   <img
                     src="{{ url_for('static', filename='images/icona_account.png') }}"
@@ -66,6 +81,7 @@
                 </span>
                 <span>Accedi</span>
               </a>
+              {% endif %}
             </div>
           </div>
         </div>
