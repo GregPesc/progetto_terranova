@@ -6,7 +6,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from PIL import Image
 
-from app import csrf, db
+from app import db
 from app.config import Config
 from app.manage_recipes.forms import RecipeForm
 from app.manage_recipes.utils import process_ingredients, validate_recipe_data
@@ -98,7 +98,7 @@ def add_custom_recipe():
                     db.session.commit()
 
                 flash("Drink aggiunto con successo!", category="success")
-                return redirect(url_for("main.home"))
+                return redirect(url_for("main.mybar"))
 
             except ValueError as e:
                 flash(str(e), category="error")
