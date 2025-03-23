@@ -24,11 +24,16 @@
   </head>
 
   <body>
-    <nav class="navbar is-white" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-white" role="navigation" aria-label="menu principale">
       <div class="navbar-brand">
-        <a class="navbar-item" href="{{ url_for('main.home') }}">
+        <a
+          class="navbar-item"
+          href="{{ url_for('main.home') }}"
+          aria-label="Vai alla pagina principale"
+        >
           <img
             src="{{ url_for('static', filename='images/resultlogo.png') }}"
+            alt="Logo dell'applicazione"
           />
         </a>
 
@@ -37,6 +42,7 @@
           class="navbar-burger"
           aria-label="menu"
           aria-expanded="false"
+          aria-controls="mainNavbarMenu"
           data-target="mainNavbarMenu"
         >
           <span aria-hidden="true"></span>
@@ -48,11 +54,24 @@
 
       <div class="navbar-menu" id="mainNavbarMenu">
         <div class="navbar-start">
-          <a class="navbar-item" href="{{ url_for('main.home') }}">Home</a>
-          <a class="navbar-item" href="{{ url_for('main.catalogo') }}"
+          <a
+            class="navbar-item"
+            href="{{ url_for('main.home') }}"
+            aria-label="Vai alla Home"
+            >Home</a
+          >
+          <a
+            class="navbar-item"
+            href="{{ url_for('main.catalogo') }}"
+            aria-label="Sfoglia il catalogo"
             >Catalogo</a
           >
-          <a class="navbar-item" href="{{ url_for('main.mybar') }}">MyBar</a>
+          <a
+            class="navbar-item"
+            href="{{ url_for('main.mybar') }}"
+            aria-label="Vai al tuo bar"
+            >MyBar</a
+          >
         </div>
         <div class="navbar-end">
           <div class="navbar-item">
@@ -61,10 +80,12 @@
               <a
                 class="button is-light"
                 href="{{ url_for('login.logout_route')}}"
+                aria-label="Esci dall'account"
               >
-                <span class="icon">
+                <span class="icon" aria-hidden="true">
                   <img
                     src="{{ url_for('static', filename='images/icona_account.png') }}"
+                    alt="Icona account"
                   />
                 </span>
                 <span>Logout</span>
@@ -73,10 +94,12 @@
               <a
                 class="button is-light"
                 href="{{ url_for('login.login_route')}}"
+                aria-label="Accedi all'account"
               >
-                <span class="icon">
+                <span class="icon" aria-hidden="true">
                   <img
                     src="{{ url_for('static', filename='images/icona_account.png') }}"
+                    alt="Icona account"
                   />
                 </span>
                 <span>Accedi</span>
@@ -92,11 +115,11 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <!-- Start flashes section -->
-    <div class="container mt-3 mb-4">
+    <div class="container mt-3 mb-4" role="alert" aria-live="polite">
       {% for category, message in messages %}
       <div class="notification is-{{ category }} is-dismissable">
         {{ message }}
-        <button class="delete"></button>
+        <button class="delete" aria-label="Chiudi notifica"></button>
       </div>
       {% endfor %}
     </div>
@@ -106,7 +129,7 @@
     {% endwith %}
 
     <!-- Start page content -->
-    {% block content %}{% endblock content %}
+    <main id="content">{% block content %}{% endblock content %}</main>
     <!-- End page content -->
 
     <script src="{{ url_for('static', filename='js/htmx.min.js') }}"></script>
