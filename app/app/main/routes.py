@@ -37,7 +37,7 @@ def catalogo():
             favorites[drink.id] = is_api_favorite(drink.id, current_user)
 
     # get all the ingredients from the db
-    ingredients = db.session.execute(ingredients_query(current_user.id)).scalars().all()
+    ingredients = db.session.execute(ingredients_query(current_user)).scalars().all()
 
     # Get categories and alcoholic types from enums
     categories = [(c.value, c.value) for c in Category]
@@ -68,7 +68,7 @@ def mybar():
             favorites[drink.id] = is_local_favorite(drink.id, current_user)
 
     # get all the ingredients from the db
-    ingredients = db.session.execute(ingredients_query(current_user.id)).scalars().all()
+    ingredients = db.session.execute(ingredients_query(current_user)).scalars().all()
 
     # Get categories and alcoholic types from enums
     categories = [(c.value, c.value) for c in Category]
@@ -96,7 +96,7 @@ def filter_ingredients():
     # Fetch all ingredients from the database
     all_ingredients = [
         i.name
-        for i in db.session.execute(ingredients_query(current_user.id)).scalars().all()
+        for i in db.session.execute(ingredients_query(current_user)).scalars().all()
     ]
 
     # Filter ingredients based on the search term
@@ -131,8 +131,12 @@ def filter_ingredients():
     )
 
 
-def ingredients_query(user_id):
+def ingredients_query(current_user):
     """Retrieve all ingredients available to the user."""
+    try:
+        user_id = current_user.id
+    except AttributeError:
+        user_id = None
     return (
         db.select(Ingredient)
         .order_by(Ingredient.name)
