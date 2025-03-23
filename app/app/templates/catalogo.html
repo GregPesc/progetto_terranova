@@ -15,6 +15,7 @@
 <div class="field search-bar p-3">
   <p class="control has-icons-left has-icons-right is-flex">
     <input
+      id="main-search-bar"
       class="input is-expanded"
       type="text"
       placeholder="cerca qui"
@@ -93,14 +94,14 @@
             <select
               name="type"
               hx-trigger="change"
-              hx-include="#filter-form"
+              hx-include="#filter-form, #main-search-bar"
               hx-get="{% if page_type == 'mybar'%}{{ url_for('main.filter_mybar') }}{% else %}{{ url_for('main.filter_catalog') }}{% endif %}"
               hx-target="#drinks-container"
             >
               <option value="">Tutti</option>
-              <option value="Alcoholic">Alcolico</option>
-              <option value="Non alcoholic">Analcolico</option>
-              <option value="Optional alcohol">Alcol Opzionale</option>
+              {% for value, label in alcoholic_types %}
+              <option value="{{ value }}">{{ label }}</option>
+              {% endfor %}
             </select>
           </div>
         </div>
@@ -114,22 +115,14 @@
             <select
               name="category"
               hx-trigger="change"
-              hx-include="#filter-form"
+              hx-include="#filter-form, #main-search-bar"
               hx-get="{% if page_type == 'mybar'%}{{ url_for('main.filter_mybar') }}{% else %}{{ url_for('main.filter_catalog') }}{% endif %}"
               hx-target="#drinks-container"
             >
               <option value="">Tutte</option>
-              <option value="Cocktail">Cocktail</option>
-              <option value="Ordinary Drink">Drink Ordinario</option>
-              <option value="Punch / Party Drink">Punch / Party Drink</option>
-              <option value="Shake">Shake</option>
-              <option value="Other / Unknown">Altro / Sconosciuto</option>
-              <option value="Cocoa">Cacao</option>
-              <option value="Shot">Shot</option>
-              <option value="Coffee / Tea">Caffè / Tè</option>
-              <option value="Homemade Liqueur">Liquore Fatto in Casa</option>
-              <option value="Beer">Birra</option>
-              <option value="Soft Drink">Soft Drink</option>
+              {% for value, label in categories %}
+              <option value="{{ value }}">{{ label }}</option>
+              {% endfor %}
             </select>
           </div>
         </div>
@@ -145,7 +138,7 @@
               name="ingredient[]"
               value="{{ i.name }}"
               hx-trigger="change"
-              hx-include="#filter-form"
+              hx-include="#filter-form, #main-search-bar"
               hx-get="{% if page_type == 'mybar'%}{{ url_for('main.filter_mybar') }}{% else %}{{ url_for('main.filter_catalog') }}{% endif %}"
               hx-target="#drinks-container"
             />

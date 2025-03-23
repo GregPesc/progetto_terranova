@@ -6,7 +6,6 @@ from flask import (
     render_template_string,
     request,
     send_from_directory,
-    url_for,
 )
 from flask_login import current_user, login_required
 from sqlalchemy import or_, select
@@ -40,6 +39,10 @@ def catalogo():
     # get all the ingredients from the db
     ingredients = db.session.execute(ingredients_query(current_user.id)).scalars().all()
 
+    # Get categories and alcoholic types from enums
+    categories = [(c.value, c.value) for c in Category]
+    alcoholic_types = [(t.value, t.value) for t in AlcoholicType]
+
     return render_template(
         "catalogo.html",
         title="Catalogo",
@@ -47,6 +50,8 @@ def catalogo():
         drinks=drinks,
         favorites=favorites,
         ingredients=ingredients,
+        categories=categories,
+        alcoholic_types=alcoholic_types,
     )
 
 
@@ -65,6 +70,10 @@ def mybar():
     # get all the ingredients from the db
     ingredients = db.session.execute(ingredients_query(current_user.id)).scalars().all()
 
+    # Get categories and alcoholic types from enums
+    categories = [(c.value, c.value) for c in Category]
+    alcoholic_types = [(t.value, t.value) for t in AlcoholicType]
+
     return render_template(
         "catalogo.html",
         title="My Bar",
@@ -72,6 +81,8 @@ def mybar():
         drinks=drinks,
         favorites=favorites,
         ingredients=ingredients,
+        categories=categories,
+        alcoholic_types=alcoholic_types,
     )
 
 
@@ -106,7 +117,7 @@ def filter_ingredients():
             <input type="checkbox" name="ingredient[]" value="{{ i }}"
                 {% if i in selected %}checked{% endif %}
                 hx-trigger="change"
-                hx-include="#filter-form"
+                hx-include="#filter-form, #main-search-bar"
                 hx-get="{% if page_type == 'mybar' %}{{ url_for('main.filter_mybar') }}{% else %}{{ url_for('main.filter_catalog') }}{% endif %}"
                 hx-target="#drinks-container">
             {{ i }}
@@ -117,7 +128,6 @@ def filter_ingredients():
         ingredients=combined,
         selected=selected,
         page_type=page_type,
-        url_for=url_for,  # Pass url_for to the template
     )
 
 
