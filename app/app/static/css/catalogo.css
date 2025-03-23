@@ -138,3 +138,8 @@ body {
 figure.image img {
   object-fit: cover;
 }
+
+#toggleFilters {
+  border: none;
+  background: white;
+}
