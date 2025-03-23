@@ -1,19 +1,12 @@
-// Selezione di tutti i bottoni con classe heart-button
-const heartButtons = document.querySelectorAll(".heart-button");
-const pencilButtons = document.querySelectorAll(".pencil-button");
+// Heart and pencil button behavior
+document.body.addEventListener("click", function (e) {
+  if (e.target.closest(".heart-button")) {
+    e.target.closest(".heart-button").classList.toggle("is-clicked-heart");
+  }
 
-// Aggiunge un event listener a ciascun bottone a forma di cuore
-heartButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    button.classList.toggle("is-clicked-heart"); // Toggle dello stato cliccato
-  });
-});
-
-// Aggiunge un event listener a ciascun bottone a forma di matita
-pencilButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    button.classList.toggle("is-clicked-pencil"); // Toggle dello stato cliccato
-  });
+  if (e.target.closest(".pencil-button")) {
+    e.target.closest(".pencil-button").classList.toggle("is-clicked-pencil");
+  }
 });
 
 // Seleziona elementi
