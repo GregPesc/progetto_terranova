@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - "docker"
-
+  workflow_dispatch:
 permissions:
   contents: read
   packages: write
