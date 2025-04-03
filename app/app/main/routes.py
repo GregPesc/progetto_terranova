@@ -97,7 +97,53 @@ def mybar():
 
 @main.route("/api/<int:favorite_id>")
 def specific_api(favorite_id: int):
-    return render_template("cocktail.html", title="")
+    # Query the external API for drink details by ID
+    try:
+        response = requests.get(
+            API_BASE_URL + "lookup.php", timeout=5, params={"i": favorite_id}
+        ).json()
+
+        # Check if the API returned valid data
+        if not response.get("drinks"):
+            return "Drink not found", 404
+
+        # Extract the drink data from the response
+        api_drink = response["drinks"][0]
+
+        # Extract ingredients and their measures from the API response
+        # The API returns ingredients as ingredientN and measures as measureN
+        ingredients = []
+        for i in range(1, 16):  # The API supports up to 15 ingredients
+            ingredient = api_drink.get(f"strIngredient{i}")
+            measure = api_drink.get(f"strMeasure{i}")
+
+            # Only add if ingredient exists
+            if ingredient and ingredient.strip():
+                ingredients.append(
+                    {
+                        "name": ingredient.strip(),
+                        "measure": measure.strip() if measure else None,
+                    }
+                )
+
+        # Format drink information to match the format used in specific_local
+        drink_info = {
+            "name": api_drink.get("strDrink"),
+            "alcoholic_type": api_drink.get("strAlcoholic"),
+            "category": api_drink.get("strCategory"),
+            "instructions": api_drink.get("strInstructions"),
+            "image_url": api_drink.get("strDrinkThumb"),
+            "ingredients": ingredients,
+        }
+
+        return render_template(
+            "cocktail.html", title=drink_info["name"], drink_info=drink_info
+        )
+
+    except requests.exceptions.Timeout:
+        return "The request timed out. Please try again later.", 504
+    except requests.exceptions.RequestException as e:
+        return f"An error occurred: {e}", 500
 
 
 @main.route("/local/<string:favorite_id>")
