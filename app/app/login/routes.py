@@ -44,6 +44,14 @@ def register_route():
     form = RegisterForm()
 
     if request.method == "POST" and form.validate_on_submit():
+        # check that the email is not already in use
+        existing_user = db.session.execute(
+            db.select(User).filter_by(email=form.email.data.lower())
+        ).scalar_one_or_none()
+        if existing_user:
+            flash("Email già in uso.", category="danger")
+            return redirect(url_for("login.register_route"))
+
         processed_pw = flask_bcrypt.generate_password_hash(form.password.data).decode(
             "utf-8"
         )
