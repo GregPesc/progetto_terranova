@@ -252,7 +252,7 @@ def uploaded_file(filename):
 @main.route("/htmx/filter-catalog")
 def filter_catalog():
     """Filter catalog drinks with HTMX."""
-    drink_name = request.args.get("name", "")
+    drink_name = request.args.get("name", "").strip()
     alcoholic_type = request.args.get("type", "")
     category = request.args.get("category", "")
     ingredient_names = request.args.getlist("ingredient[]")
@@ -266,16 +266,39 @@ def filter_catalog():
     }
 
     try:
-        # Query by drink name
+        # Query by drink name - OR logic
         if drink_name:
+            search_words = drink_name.split()
+            combined_results = set()  # Will hold ALL drinks matching ANY search term
+
+            # Try exact match first for full search term
             res = requests.get(
                 API_BASE_URL + "search.php", timeout=5, params={"s": drink_name}
             ).json()
-            drinks = res.get("drinks")
-            if drinks and isinstance(drinks, list):
-                result["name_query"] = {drink["idDrink"] for drink in drinks}
-            else:
-                result["name_query"] = set()
+            exact_match_drinks = res.get("drinks")
+
+            # Add exact matches to results
+            if exact_match_drinks and isinstance(exact_match_drinks, list):
+                exact_match_ids = {drink["idDrink"] for drink in exact_match_drinks}
+                combined_results.update(exact_match_ids)
+
+            # For multi-word searches, also search for each meaningful word individually (OR logic)
+            if len(search_words) > 1:
+                for word in search_words:
+                    if (
+                        len(word) > 2
+                    ):  # Only search for words with more than 2 characters
+                        word_res = requests.get(
+                            API_BASE_URL + "search.php", timeout=5, params={"s": word}
+                        ).json()
+                        if word_res.get("drinks"):
+                            # Add all drinks matching this word
+                            word_match_ids = {
+                                drink["idDrink"] for drink in word_res["drinks"]
+                            }
+                            combined_results.update(word_match_ids)
+
+            result["name_query"] = combined_results if combined_results else set()
 
         # Query by alcoholic type
         if alcoholic_type:
@@ -353,16 +376,23 @@ def filter_catalog():
 @login_required
 def filter_mybar():
     """Filter mybar drinks with HTMX."""
-    drink_name = request.args.get("name", "")
+    drink_name = request.args.get("name", "").strip()
     alcoholic_type = request.args.get("type", "")
     category = request.args.get("category", "")
     ingredient_names = request.args.getlist("ingredient[]")
 
     query = select(UserDrink)
 
-    # Apply filters
     if drink_name:
-        query = query.where(UserDrink.name.ilike(f"%{drink_name}%"))
+        search_words = drink_name.split()
+        if len(search_words) > 1:
+            # Multi-word search: each word should be present in the name
+            for word in search_words:
+                if len(word) > 2:  # Only filter on words with more than 2 characters
+                    query = query.where(UserDrink.name.ilike(f"%{word}%"))
+        else:
+            # Single word search: use the original approach
+            query = query.where(UserDrink.name.ilike(f"%{drink_name}%"))
 
     if alcoholic_type:
         query = query.where(UserDrink.alcoholic_type == AlcoholicType(alcoholic_type))
