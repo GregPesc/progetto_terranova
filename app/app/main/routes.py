@@ -1,3 +1,5 @@
+import uuid
+
 import requests
 from flask import (
     Blueprint,
@@ -12,7 +14,14 @@ from sqlalchemy import or_, select
 
 from app import db
 from app.favorite.utils import is_api_favorite, is_local_favorite
-from app.models import AlcoholicType, ApiDrink, Category, Ingredient, UserDrink
+from app.models import (
+    AlcoholicType,
+    ApiDrink,
+    Category,
+    Ingredient,
+    UserDrink,
+    drink_ingredient,
+)
 
 main = Blueprint("main", __name__)
 
@@ -84,6 +93,49 @@ def mybar():
         categories=categories,
         alcoholic_types=alcoholic_types,
     )
+
+
+@main.route("/api/<int:favorite_id>")
+def specific_api(favorite_id: int):
+    return render_template("cocktail.html", title="")
+
+
+@main.route("/local/<string:favorite_id>")
+@login_required
+def specific_local(favorite_id):
+    try:
+        favorite_id = uuid.UUID(favorite_id, version=4)
+    except ValueError:
+        return "Invalid drink id", 404
+
+    drink = (
+        db.session.query(UserDrink)
+        .filter_by(id=favorite_id, user_id=current_user.id)
+        .first()
+    )
+    if not drink:
+        return "Drink not found", 404
+
+    stmt = (
+        select(Ingredient.name, drink_ingredient.c.measure)
+        .join(drink_ingredient, Ingredient.id == drink_ingredient.c.ingredients_id)
+        .where(drink_ingredient.c.drink_id == favorite_id)
+    )
+
+    ingredient_data = db.session.execute(stmt).all()
+
+    drink_info = {
+        "name": drink.name,
+        "alcoholic_type": drink.alcoholic_type.value,
+        "category": drink.category.value,
+        "instructions": drink.instructions,
+        "image_url": drink.thumbnail,
+        "ingredients": [
+            {"name": name, "measure": measure} for name, measure in ingredient_data
+        ],
+    }
+
+    return render_template("cocktail.html", title="Specific", drink_info=drink_info)
 
 
 @main.route("/htmx/filter-ingredients")

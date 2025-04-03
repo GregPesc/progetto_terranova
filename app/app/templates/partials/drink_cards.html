@@ -1,35 +1,39 @@
 {% for drink in drinks %}
 <div class="column is-one-third">
-  <div class="card card-custom">
-    <div class="card-image">
-      <figure class="image is-square">
-        <img
-          loading="lazy"
-          src="{% if page_type == 'mybar'%} {% if drink.thumbnail %}{{ url_for('main.uploaded_file', filename=drink.thumbnail) }}{% endif %} {% else %} {{drink.thumbnail}} {% endif %}"
-          alt="{{ drink.name }}"
-        />
-      </figure>
-    </div>
-    <div class="card-content">
-      <p class="title is-5 title-custom-card">{{ drink.name }}</p>
-      <div class="buttons-container">
-        <button class="pencil-button">
-          <span class="icon">
-            <i class="fas fa-pencil-alt"></i>
-          </span>
-        </button>
-        <button
-          class="heart-button {{ 'is-clicked-heart' if favorites[drink.id] }}"
-          hx-post="{% if page_type == 'mybar'%} {{ url_for('favorite.toggle_user_local_favorite', favorite_id=drink.id) }} {% else %} {{ url_for('favorite.toggle_user_api_favorite', favorite_id=drink.id) }} {% endif %}"
-          hx-swap="none"
-        >
-          <span class="icon">
-            <i class="fas fa-heart"></i>
-          </span>
-        </button>
+  <a
+    href="{% if page_type == 'mybar'%} {{ url_for('main.specific_local', favorite_id=drink.id) }} {% else %} {{ url_for('main.specific_api', favorite_id=drink.id) }} {% endif %}"
+  >
+    <div class="card card-custom">
+      <div class="card-image">
+        <figure class="image is-square">
+          <img
+            loading="lazy"
+            src="{% if page_type == 'mybar'%} {% if drink.thumbnail %}{{ url_for('main.uploaded_file', filename=drink.thumbnail) }}{% endif %} {% else %} {{drink.thumbnail}} {% endif %}"
+            alt="{{ drink.name }}"
+          />
+        </figure>
+      </div>
+      <div class="card-content">
+        <p class="title is-5 title-custom-card">{{ drink.name }}</p>
+        <div class="buttons-container">
+          <button class="pencil-button">
+            <span class="icon">
+              <i class="fas fa-pencil-alt"></i>
+            </span>
+          </button>
+          <button
+            class="heart-button {{ 'is-clicked-heart' if favorites[drink.id] }}"
+            hx-post="{% if page_type == 'mybar'%} {{ url_for('favorite.toggle_user_local_favorite', favorite_id=drink.id) }} {% else %} {{ url_for('favorite.toggle_user_api_favorite', favorite_id=drink.id) }} {% endif %}"
+            hx-swap="none"
+          >
+            <span class="icon">
+              <i class="fas fa-heart"></i>
+            </span>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  </a>
 </div>
 {% else %}
 <div class="column is-full">
