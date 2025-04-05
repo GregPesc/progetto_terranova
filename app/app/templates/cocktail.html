@@ -1,1 +1,60 @@
-{% extends "layout.html" %} {% block content %} {{drink_info}} {% endblock %}
+{% extends "layout.html" %} {% block content %}
+<div class="container mt-6">
+  <div class="columns">
+    <!-- Image Column -->
+    <div class="column is-5">
+      <figure class="image is-4by3">
+        <img src="{{ drink.get_thumbnail_url() }}" alt="{{ drink.name }}" />
+      </figure>
+    </div>
+
+    <!-- Details Column -->
+    <div class="column is-7">
+      <h1 class="title is-2">{{ drink.name }}</h1>
+      <p class="subtitle is-5">{{ drink.category }}</p>
+
+      {% if drink.alcoholic_type %}
+      <div class="tags mb-4">
+        <span class="tag is-medium">{{ drink.alcoholic_type }}</span>
+      </div>
+      {% endif %}
+
+      <h3 class="title is-4 mt-5">Ingredients</h3>
+      <div class="content">
+        <ul>
+          {% for ingredient in ingredients %}
+          <li>
+            <strong>{{ ingredient.name }}</strong>
+            {% if ingredient.measure %} - {{ ingredient.measure }}{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      {% if drink.instructions %}
+      <h3 class="title is-4 mt-5">Instructions</h3>
+      <div class="content">
+        <p>{{ drink.instructions }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Add to favorites button -->
+      <div class="mt-5">
+        <button
+          class="button is-primary heart-button {{ 'is-clicked-heart' if is_favorite }}"
+          hx-post="{% if drink.is_local() %} {{ url_for('favorite.toggle_user_local_favorite', favorite_id=drink.id) }} {% else %} {{ url_for('favorite.toggle_user_api_favorite', favorite_id=drink.id) }} {% endif %}"
+          hx-swap="none"
+        >
+          <span class="icon">
+            <i class="fas fa-heart"></i>
+          </span>
+          <span
+            >{% if is_favorite %}Remove from{% else %}Add to{% endif %}
+            Favorites</span
+          >
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -136,19 +136,28 @@ def specific_api(drink_id: int):
                     }
                 )
 
-        # Format drink information to match the format used in specific_local
-        drink_info = {
-            "name": api_drink.get("strDrink"),
-            "alcoholic_type": api_drink.get("strAlcoholic"),
-            "category": api_drink.get("strCategory"),
-            "instructions": api_drink.get("strInstructions"),
-            "image_url": api_drink.get("strDrinkThumb"),
-            "ingredients": ingredients,
-        }
+        # Get the drink from database or create a new object for the template
+        drink = ApiDrink.query.get(drink_id)
+        if not drink:
+            # If not in database, create a temporary object for the template
+            drink = ApiDrink(
+                id=drink_id,
+                name=api_drink.get("strDrink"),
+                thumbnail=api_drink.get("strDrinkThumb"),
+            )
+
+        # Check if it's a favorite
+        is_favorite = False
+        if current_user.is_authenticated:
+            is_favorite = is_api_favorite(drink_id, current_user)
 
         response = make_response(
             render_template(
-                "cocktail.html", title=drink_info["name"], drink_info=drink_info
+                "cocktail.html",
+                title=drink.name,
+                drink=drink,
+                ingredients=ingredients,
+                is_favorite=is_favorite,
             )
         )
 
@@ -190,25 +199,29 @@ def specific_local(drink_id):
 
     ingredient_data = db.session.execute(stmt).all()
 
-    drink_info = {
-        "name": drink.name,
-        "alcoholic_type": drink.alcoholic_type.value,
-        "category": drink.category.value,
-        "instructions": drink.instructions,
-        "image_url": drink.thumbnail,
-        "ingredients": [
-            {"name": name, "measure": measure} for name, measure in ingredient_data
-        ],
-    }
+    ingredients = [
+        {"name": name, "measure": measure} for name, measure in ingredient_data
+    ]
+
+    # Check if it's a favorite
+    is_favorite = False
+    if current_user.is_authenticated:
+        is_favorite = is_local_favorite(drink.id, current_user)
 
     response = make_response(
-        render_template("cocktail.html", title="Specific", drink_info=drink_info)
+        render_template(
+            "cocktail.html",
+            title=drink.name,
+            drink=drink,
+            ingredients=ingredients,
+            is_favorite=is_favorite,
+        )
     )
 
     # Use the utility function for setting the cookie
     response = set_history_cookie(response, history_json)
 
-    return response  # noqa: RET504
+    return response
 
 
 @main.route("/htmx/filter-ingredients")
