@@ -8,7 +8,7 @@
         <figure class="image is-square">
           <img
             loading="lazy"
-            src="{% if page_type == 'mybar'%} {% if drink.thumbnail %}{{ url_for('main.uploaded_file', filename=drink.thumbnail) }}{% endif %} {% else %} {{drink.thumbnail}} {% endif %}"
+            src="{{ drink.get_thumbnail_url() }}"
             alt="{{ drink.name }}"
           />
         </figure>

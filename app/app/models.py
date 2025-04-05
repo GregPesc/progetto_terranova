@@ -20,6 +20,17 @@ class ApiDrink(db.Model):
     def __repr__(self):
         return f"<ApiDrink id={self.id}, name={self.name}, thumbnail={self.thumbnail}>"
 
+    def get_thumbnail_url(self):
+        return self.thumbnail
+
+    def get_detail_url(self):
+        from flask import url_for
+
+        return url_for("main.specific_api", drink_id=self.id)
+
+    def is_local(self):
+        return False
+
 
 class AlcoholicType(enum.Enum):
     ALCOHOLIC = "Alcoholic"
@@ -113,6 +124,21 @@ class UserDrink(db.Model):
 
     def __repr__(self):
         return f"<UserDrink id={self.id}, name={self.name}, category={self.category}, alcoholic_type={self.alcoholic_type}, instructions={self.instructions}, thumbnail={self.thumbnail}, ingredients={self.ingredients}>"
+
+    def get_thumbnail_url(self):
+        from flask import url_for
+
+        if self.thumbnail:
+            return url_for("main.uploaded_file", filename=self.thumbnail)
+        return None
+
+    def get_detail_url(self):
+        from flask import url_for
+
+        return url_for("main.specific_local", drink_id=self.id)
+
+    def is_local(self):
+        return True
 
 
 class Ingredient(db.Model):
