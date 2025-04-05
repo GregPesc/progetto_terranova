@@ -66,9 +66,28 @@ def set_history_cookie(response, history_json):
 
 
 def update_cocktail_history(cocktail_id, is_local=False):
-    """Update history list with a new cocktail visit"""
+    """Update history list with a new cocktail visit
+
+    If the drink already exists in history, it will be moved to the front
+    and any duplicate removed.
+    """
     history_json = load_history_cookie()
-    history_json.insert(
-        0, {"id": str(cocktail_id), "source": "local" if is_local else "api"}
-    )
+
+    # Create the new item to add
+    new_item = {"id": str(cocktail_id), "source": "local" if is_local else "api"}
+
+    # Remove any existing instances of this drink
+    history_json = [
+        item
+        for item in history_json
+        if not (
+            item.get("id") == new_item["id"]
+            and item.get("source") == new_item["source"]
+        )
+    ]
+
+    # Add the item to the front of the list
+    history_json.insert(0, new_item)
+
+    # Keep only MAX_HISTORY items
     return history_json[:MAX_HISTORY]
