@@ -1,0 +1,104 @@
+<form id="filter-form">
+  <!-- Search Bar -->
+  <div class="field search-bar">
+    <div class="control has-icons-left has-icons-right is-flex">
+      <input
+        id="search-bar-input"
+        class="input is-expanded"
+        type="text"
+        placeholder="Cerca ingredienti..."
+        name="search"
+        hx-get="{{ url_for('main.filter_ingredients') }}"
+        hx-trigger="input changed delay:300ms"
+        hx-target="#ingredient-list"
+        hx-vals="js:{
+            selected: Array.from(document.querySelectorAll('input[name=\'ingredient[]\']:checked')).map(cb => cb.value),
+            page_type: '{{ page_type }}'
+          }"
+      />
+      <span class="icon is-left">
+        <i class="fas fa-search"></i>
+      </span>
+    </div>
+  </div>
+
+  <!-- Alcoholic Type Selection -->
+  <div class="field">
+    <label class="label">Tipo di Alcol</label>
+    <div class="control">
+      <div class="select is-fullwidth">
+        <select
+          name="type"
+          hx-trigger="change"
+          hx-include="#filter-form, #main-search-bar"
+          hx-get="{% if page_type == 'mybar'%}{{ url_for('main.filter_mybar') }}{% else %}{{ url_for('main.filter_catalog') }}{% endif %}"
+          hx-target="#drinks-container"
+        >
+          <option value="">Tutti</option>
+          {% for value, label in alcoholic_types %}
+          <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Selection -->
+  <div class="field">
+    <label class="label">Categoria</label>
+    <div class="control">
+      <div class="select is-fullwidth">
+        <select
+          name="category"
+          hx-trigger="change"
+          hx-include="#filter-form, #main-search-bar"
+          hx-get="{% if page_type == 'mybar'%}{{ url_for('main.filter_mybar') }}{% else %}{{ url_for('main.filter_catalog') }}{% endif %}"
+          hx-target="#drinks-container"
+        >
+          <option value="">Tutte</option>
+          {% for value, label in categories %}
+          <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ingredient Checkboxes (Dynamically Updated) -->
+  <div id="ingredient-list" class="grid">
+    {% for i in ingredients %}
+    <div class="cell">
+      <label class="checkbox">
+        <input
+          type="checkbox"
+          name="ingredient[]"
+          value="{{ i.name }}"
+          hx-trigger="change"
+          hx-include="#filter-form, #main-search-bar"
+          hx-get="{% if page_type == 'mybar'%}{{ url_for('main.filter_mybar') }}{% else %}{{ url_for('main.filter_catalog') }}{% endif %}"
+          hx-target="#drinks-container"
+        />
+        {{ i.name }}
+      </label>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Buttons -->
+  <button
+    class="button is-danger is-light mb-5"
+    hx-get="{{ url_for('main.filter_ingredients') }}"
+    hx-target="#ingredient-list"
+    hx-vals='js:{search: "", selected: []}'
+    hx-trigger="click"
+    hx-on::after-request="if(event.detail.successful) {
+        document.getElementById('search-bar-input').value = '';
+        document.querySelector('select[name=\'type\']').value = '';
+        document.querySelector('select[name=\'category\']').value = '';
+        const event = new Event('change');
+        document.querySelector('select[name=\'type\']').dispatchEvent(event);
+      }"
+  >
+    Ripristina Filtri
+  </button>
+</form>
