@@ -11,11 +11,13 @@
     <!-- Details Column -->
     <div class="column is-7">
       <h1 class="title is-2">{{ drink.name }}</h1>
-      <p class="subtitle is-5">{{ drink.category }}</p>
+      <p class="subtitle is-5">{{ drink.get_category_display() }}</p>
 
-      {% if drink.alcoholic_type %}
+      {% if drink.get_alcoholic_type_display() %}
       <div class="tags mb-4">
-        <span class="tag is-medium">{{ drink.alcoholic_type }}</span>
+        <span class="tag is-medium">
+          {{ drink.get_alcoholic_type_display() }}
+        </span>
       </div>
       {% endif %}
 
