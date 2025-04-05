@@ -31,6 +31,12 @@ class ApiDrink(db.Model):
     def is_local(self):
         return False
 
+    def get_category_display(self):
+        return self.category
+
+    def get_alcoholic_type_display(self):
+        return self.alcoholic_type
+
 
 class AlcoholicType(enum.Enum):
     ALCOHOLIC = "Alcoholic"
@@ -139,6 +145,12 @@ class UserDrink(db.Model):
 
     def is_local(self):
         return True
+
+    def get_category_display(self):
+        return self.category.value
+
+    def get_alcoholic_type_display(self):
+        return self.alcoholic_type.value
 
 
 class Ingredient(db.Model):
