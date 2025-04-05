@@ -4,6 +4,7 @@ import requests
 from flask import (
     Blueprint,
     current_app,
+    make_response,
     render_template,
     render_template_string,
     request,
@@ -14,6 +15,11 @@ from sqlalchemy import or_, select
 
 from app import db
 from app.favorite.utils import is_api_favorite, is_local_favorite
+from app.main.utils.history import (
+    get_history_drinks,
+    set_history_cookie,
+    update_cocktail_history,
+)
 from app.models import (
     AlcoholicType,
     ApiDrink,
@@ -31,7 +37,8 @@ API_BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
 
 @main.route("/")
 def home():
-    return render_template("index.html", title="Applicazione")
+    drinks = get_history_drinks()
+    return render_template("index.html", title="Applicazione", history=drinks)
 
 
 @main.route("/catalogo")
@@ -95,12 +102,12 @@ def mybar():
     )
 
 
-@main.route("/api/<int:favorite_id>")
-def specific_api(favorite_id: int):
+@main.route("/api/<int:drink_id>")
+def specific_api(drink_id: int):
     # Query the external API for drink details by ID
     try:
         response = requests.get(
-            API_BASE_URL + "lookup.php", timeout=5, params={"i": favorite_id}
+            API_BASE_URL + "lookup.php", timeout=5, params={"i": drink_id}
         ).json()
 
         # Check if the API returned valid data
@@ -109,6 +116,9 @@ def specific_api(favorite_id: int):
 
         # Extract the drink data from the response
         api_drink = response["drinks"][0]
+
+        # Update history
+        history_json = update_cocktail_history(drink_id)
 
         # Extract ingredients and their measures from the API response
         # The API returns ingredients as ingredientN and measures as measureN
@@ -136,9 +146,16 @@ def specific_api(favorite_id: int):
             "ingredients": ingredients,
         }
 
-        return render_template(
-            "cocktail.html", title=drink_info["name"], drink_info=drink_info
+        response = make_response(
+            render_template(
+                "cocktail.html", title=drink_info["name"], drink_info=drink_info
+            )
         )
+
+        # Set the updated history cookie
+        response = set_history_cookie(response, history_json)
+
+        return response  # noqa: RET504, TRY300
 
     except requests.exceptions.Timeout:
         return "The request timed out. Please try again later.", 504
@@ -146,26 +163,29 @@ def specific_api(favorite_id: int):
         return f"An error occurred: {e}", 500
 
 
-@main.route("/local/<string:favorite_id>")
+@main.route("/local/<string:drink_id>")
 @login_required
-def specific_local(favorite_id):
+def specific_local(drink_id):
     try:
-        favorite_id = uuid.UUID(favorite_id, version=4)
+        drink_id = uuid.UUID(drink_id, version=4)
     except ValueError:
         return "Invalid drink id", 404
 
     drink = (
         db.session.query(UserDrink)
-        .filter_by(id=favorite_id, user_id=current_user.id)
+        .filter_by(id=drink_id, user_id=current_user.id)
         .first()
     )
     if not drink:
         return "Drink not found", 404
 
+    # Update history using our utility function
+    history_json = update_cocktail_history(drink.id, True)
+
     stmt = (
         select(Ingredient.name, drink_ingredient.c.measure)
         .join(drink_ingredient, Ingredient.id == drink_ingredient.c.ingredients_id)
-        .where(drink_ingredient.c.drink_id == favorite_id)
+        .where(drink_ingredient.c.drink_id == drink_id)
     )
 
     ingredient_data = db.session.execute(stmt).all()
@@ -181,7 +201,14 @@ def specific_local(favorite_id):
         ],
     }
 
-    return render_template("cocktail.html", title="Specific", drink_info=drink_info)
+    response = make_response(
+        render_template("cocktail.html", title="Specific", drink_info=drink_info)
+    )
+
+    # Use the utility function for setting the cookie
+    response = set_history_cookie(response, history_json)
+
+    return response  # noqa: RET504
 
 
 @main.route("/htmx/filter-ingredients")

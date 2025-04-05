@@ -1,5 +1,6 @@
 <!-- prettier-ignore -->
 {% extends "layout.html" %}
 {% block content %}
-
-{% endblock content %}
+{% for d in history %}
+{{ d.id }}<br />
+{%endfor%} {% endblock content %}
