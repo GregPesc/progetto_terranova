@@ -125,7 +125,9 @@ class UserDrink(db.Model):
     ingredients: Mapped[list[Ingredient]] = relationship(
         secondary=drink_ingredient, back_populates="drinks"
     )
-    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("User.id", ondelete="CASCADE"), nullable=False
+    )
     user: Mapped[User] = relationship(back_populates="user_drinks")
 
     def __repr__(self):
@@ -161,7 +163,9 @@ class Ingredient(db.Model):
     drinks: Mapped[list[UserDrink]] = relationship(
         secondary=drink_ingredient, back_populates="ingredients"
     )
-    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), nullable=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("User.id", ondelete="CASCADE"), nullable=True
+    )
     user: Mapped[User] = relationship(back_populates="user_custom_ingredients")
 
     def __repr__(self):
@@ -173,7 +177,7 @@ class ApiFavorite(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("User.id"), nullable=False, primary_key=True
+        ForeignKey("User.id", ondelete="CASCADE"), nullable=False, primary_key=True
     )
     user: Mapped[User] = relationship(back_populates="user_apifavorites")
 
@@ -186,7 +190,7 @@ class LocalFavorite(db.Model):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("User.id"), nullable=False, primary_key=True
+        ForeignKey("User.id", ondelete="CASCADE"), nullable=False, primary_key=True
     )
     user: Mapped[User] = relationship(back_populates="user_localfavorites")
 

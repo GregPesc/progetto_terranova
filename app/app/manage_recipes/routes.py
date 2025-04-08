@@ -10,7 +10,14 @@ from app import db
 from app.config import Config
 from app.manage_recipes.forms import RecipeForm
 from app.manage_recipes.utils import process_ingredients, validate_recipe_data
-from app.models import AlcoholicType, Category, Ingredient, UserDrink, drink_ingredient
+from app.models import (
+    AlcoholicType,
+    Category,
+    Ingredient,
+    LocalFavorite,
+    UserDrink,
+    drink_ingredient,
+)
 
 manage_recipes = Blueprint("manage_recipes", __name__)
 
@@ -129,7 +136,18 @@ def delete_custom_recipe(drink_id):
     if drink.user != current_user:
         return {"error": "Unauthorized"}, 403
 
+    # Delete any associated favorite records
+    LocalFavorite.query.filter_by(id=drink_id).delete()
+    db.session.commit()
+
+    # Delete the associated image file if it exists
+    # sqlite non ha attivi di default i constraint chiave esterna quindi va fatto a mano
+    if drink.thumbnail:
+        image_path = Path(Config.UPLOAD_FOLDER) / Path(drink.thumbnail)
+        if Path.exists(image_path):
+            Path.unlink(image_path)
+
     db.session.delete(drink)
     db.session.commit()
 
-    return '', 200
+    return "", 200
