@@ -72,7 +72,6 @@ def catalogo():
         alcoholic_types=alcoholic_types,
     )
 
-
 @main.route("/mybar")
 @login_required
 def mybar():
