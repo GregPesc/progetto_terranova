@@ -101,6 +101,7 @@ def mybar():
         ingredients=ingredients,
         categories=categories,
         alcoholic_types=alcoholic_types,
+        message="Non hai drink nel bar. Aggiungine uno adesso!",
     )
 
 
@@ -434,13 +435,28 @@ def filter_catalog():
 @login_required
 def filter_mybar():
     """Filter mybar drinks with HTMX."""
+    query = select(UserDrink)
+
+    # Check if user has any drinks before proceeding
+    user_has_drinks = (
+        db.session.query(UserDrink).filter_by(user_id=current_user.id).first()
+        is not None
+    )
+
+    if not user_has_drinks:
+        return render_template(
+            "partials/drink_cards.html",
+            drinks=[],
+            favorites={},
+            page_type="mybar",
+            message="Non hai drink nel bar. Aggiungine uno adesso!",
+        )
+
     drink_name = request.args.get("name", "").strip()
     alcoholic_type = request.args.get("type", "")
     category = request.args.get("category", "")
     ingredient_names = request.args.getlist("ingredient[]")
     fav_only = request.args.get("fav_only", False)
-
-    query = select(UserDrink)
 
     if drink_name:
         search_words = drink_name.split()

@@ -46,7 +46,7 @@
 {% else %}
 <div class="column is-full">
   <div class="notification is-info">
-    Nessun drink trovato con i filtri selezionati.
+    {{ message|default('Nessun drink trovato con i filtri selezionati.') }}
   </div>
 </div>
 {% endfor %}
