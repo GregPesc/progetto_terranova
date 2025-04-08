@@ -56,6 +56,8 @@ jobs:
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
+        env:
+          FLASK_SECRET_KEY: ${{ secrets.FLASK_SECRET_KEY }}
         with:
           host: "207.154.221.248"
           username: user
@@ -66,6 +68,7 @@ jobs:
             git fetch --all
             git checkout main
             git reset --hard origin/main
+            echo "FLASK_SECRET_KEY=$FLASK_SECRET_KEY" >> .env
             docker pull ghcr.io/gregpesc/progetto_terranova-app:latest
             docker pull ghcr.io/gregpesc/progetto_terranova-caddy:latest
             docker compose down

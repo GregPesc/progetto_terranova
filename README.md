@@ -24,6 +24,9 @@ cd progetto_terranova
 python -m .venv .venv
 .\.venv\Scripts\activate
 pip install -r app\requirements.txt
+notepad .env
+(Incolla la seguente riga, salva e chiudi)
+FLASK_SECRET_KEY=your-local-dev-secret
 ```
 
 ## Avviare l'applicazione

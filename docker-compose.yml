@@ -6,6 +6,8 @@ services:
     hostname: app
     container_name: app
     restart: always
+    env_file:
+      - .env
     healthcheck:
       test:
         [
