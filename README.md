@@ -2,13 +2,13 @@
 
 Applicazione web per i cocktail.
 
-# Deploy
+# Docker
 
-Per deploy con Docker: [README_deploy](./README_deploy.md)
+Per il deploy (dev/production) con Docker: [README_deploy](./README_deploy.md)
 
 # Come eseguire l'applicazione
 
-Testato con python 3.13.1 su Windows.
+Testato con python 3.13.1 su Windows 10.
 
 ```
 python --version
