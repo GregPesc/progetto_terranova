@@ -64,8 +64,8 @@ jobs:
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             cd ~/progetto_terranova
             git fetch --all
-            git checkout docker
-            git reset --hard origin/docker
+            git checkout main
+            git reset --hard origin/main
             docker pull ghcr.io/gregpesc/progetto_terranova-app:latest
             docker pull ghcr.io/gregpesc/progetto_terranova-caddy:latest
             docker compose down
