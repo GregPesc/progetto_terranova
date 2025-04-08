@@ -136,7 +136,7 @@ class UserDrink(db.Model):
 
         if self.thumbnail:
             return url_for("main.uploaded_file", filename=self.thumbnail)
-        return None
+        return ""
 
     def get_detail_url(self):
         from flask import url_for

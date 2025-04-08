@@ -23,8 +23,10 @@ from app.main.utils.history import (
 from app.models import (
     AlcoholicType,
     ApiDrink,
+    ApiFavorite,
     Category,
     Ingredient,
+    LocalFavorite,
     UserDrink,
     drink_ingredient,
 )
@@ -300,6 +302,7 @@ def filter_catalog():
     alcoholic_type = request.args.get("type", "")
     category = request.args.get("category", "")
     ingredient_names = request.args.getlist("ingredient[]")
+    fav_only = request.args.get("fav_only", False)
 
     # Use the API to filter drinks
     result = {
@@ -307,6 +310,7 @@ def filter_catalog():
         "alcoholic_query": None,
         "category_query": None,
         "ingredient_query": None,
+        "fav_drinks": None,
     }
 
     try:
@@ -386,6 +390,16 @@ def filter_catalog():
                 set.intersection(*ingredient_sets) if ingredient_sets else set()
             )
 
+        if fav_only and current_user.is_authenticated:
+            query = select(ApiDrink)
+            query = query.join(ApiFavorite, ApiFavorite.id == ApiDrink.id)
+            query = query.where(ApiFavorite.user_id == current_user.id)
+            drinks: list[ApiDrink] = db.session.execute(query).scalars().all()
+            if drinks:
+                result["fav_drinks"] = {str(drink.id) for drink in drinks}
+            else:
+                result["fav_drinks"] = set()
+
         # Combine all queries
         filtered_ids = (
             set.intersection(*(query for query in result.values() if query is not None))
@@ -394,7 +408,7 @@ def filter_catalog():
         )
 
         # If no filters applied, get all drinks
-        if not any([drink_name, alcoholic_type, category, ingredient_names]):
+        if not any([drink_name, alcoholic_type, category, ingredient_names, fav_only]):
             drinks = ApiDrink.query.all()
         else:
             # Get drinks by ID
@@ -424,6 +438,7 @@ def filter_mybar():
     alcoholic_type = request.args.get("type", "")
     category = request.args.get("category", "")
     ingredient_names = request.args.getlist("ingredient[]")
+    fav_only = request.args.get("fav_only", False)
 
     query = select(UserDrink)
 
@@ -449,6 +464,10 @@ def filter_mybar():
             query = query.where(
                 UserDrink.ingredients.any(Ingredient.name.ilike(f"%{ingredient_name}%"))
             )
+
+    if fav_only:
+        query = query.join(LocalFavorite, LocalFavorite.id == UserDrink.id)
+        # query = query.where(LocalFavorite.user_id == current_user.id)
 
     # Only show user's drinks
     query = query.where(UserDrink.user == current_user)
