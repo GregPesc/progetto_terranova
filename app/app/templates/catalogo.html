@@ -5,7 +5,9 @@
 />
 {% endblock head%} {% block content %}
 
-<h1 class="title title-custom">Catalogo</h1>
+<h1 class="title title-custom">
+  {% if page_type == "mybar" %}My Bar{% else %}Catalogo{% endif %}
+</h1>
 
 <!--Barra di ricerca-->
 <div class="field search-bar p-3">
