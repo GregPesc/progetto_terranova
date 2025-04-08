@@ -143,3 +143,7 @@ figure.image img {
   border: none;
   background: white;
 }
+
+.big-checkbox {
+  transform: scale(1.3);
+}
