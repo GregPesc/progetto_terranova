@@ -3,10 +3,6 @@ document.body.addEventListener("click", function (e) {
   if (e.target.closest(".heart-button")) {
     e.target.closest(".heart-button").classList.toggle("is-clicked-heart");
   }
-
-  if (e.target.closest(".pencil-button")) {
-    e.target.closest(".pencil-button").classList.toggle("is-clicked-pencil");
-  }
 });
 
 // Seleziona elementi
