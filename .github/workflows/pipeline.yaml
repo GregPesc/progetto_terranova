@@ -50,25 +50,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: create env file
-        run: |
-          echo "GIT_COMMIT_HASH=${{ github.sha }}" >> ./envfile
-
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         env:
           FLASK_SECRET_KEY: ${{ secrets.FLASK_SECRET_KEY }}
+          GIT_COMMIT_HASH: ${{ github.sha }}
         with:
           host: "207.154.221.248"
           username: user
           key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          envs: FLASK_SECRET_KEY, GIT_COMMIT_HASH
           script: |
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             cd ~/progetto_terranova
             git fetch --all
             git checkout main
             git reset --hard origin/main
-            echo "FLASK_SECRET_KEY=$FLASK_SECRET_KEY" >> .env
+            echo "FLASK_SECRET_KEY=$FLASK_SECRET_KEY" > .env
+            echo "GIT_COMMIT_HASH=$GIT_COMMIT_HASH" >> .env
             docker pull ghcr.io/gregpesc/progetto_terranova-app:latest
             docker pull ghcr.io/gregpesc/progetto_terranova-caddy:latest
             docker compose down
