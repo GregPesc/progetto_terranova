@@ -132,4 +132,4 @@ def delete_custom_recipe(drink_id):
     db.session.delete(drink)
     db.session.commit()
 
-    return {"message": "Drink deleted successfully"}, 200
+    return '', 200
