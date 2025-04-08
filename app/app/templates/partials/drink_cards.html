@@ -2,7 +2,7 @@
 <div class="column is-one-third" id="drink-{{ drink.id }}">
   <div class="card card-custom">
     <a
-      href="{% if page_type == 'mybar'%} {{ url_for('main.specific_local', favorite_id=drink.id) }} {% else %} {{ url_for('main.specific_api', favorite_id=drink.id) }} {% endif %}"
+      href="{% if page_type == 'mybar'%} {{ url_for('main.specific_local', drink_id=drink.id) }} {% else %} {{ url_for('main.specific_api', drink_id=drink.id) }} {% endif %}"
     >
       <div class="card-image">
         <figure class="image is-square">
