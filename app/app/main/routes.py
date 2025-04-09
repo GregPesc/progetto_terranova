@@ -1,6 +1,7 @@
 import itertools
 import random
 import uuid
+import random as rdm
 
 import requests
 from flask import (
@@ -553,3 +554,142 @@ def filter_mybar():
         favorites=favorites,
         page_type="mybar",
     )
+
+
+@main.route("/htmx/filter-random")
+def filter_random():
+    """Filter catalog drinks with HTMX."""
+    drink_name = request.args.get("name", "").strip()
+    alcoholic_type = request.args.get("type", "")
+    category = request.args.get("category", "")
+    ingredient_names = request.args.getlist("ingredient[]")
+    fav_only = request.args.get("fav_only", False)
+
+    # Use the API to filter drinks
+    result = {
+    "name_query": None,
+    "alcoholic_query": None,
+    "category_query": None,
+    "ingredient_query": None,
+    "fav_drinks": None,
+    }
+
+    try:
+        # Query by drink name - OR logic
+        if drink_name:
+            search_words = drink_name.split()
+            combined_results = set()  # Will hold ALL drinks matching ANY search term
+
+            # Try exact match first for full search term
+            res = requests.get(
+                API_BASE_URL + "search.php", timeout=5, params={"s": drink_name}
+            ).json()
+            exact_match_drinks = res.get("drinks")
+
+            # Add exact matches to results
+            if exact_match_drinks and isinstance(exact_match_drinks, list):
+                exact_match_ids = {drink["idDrink"] for drink in exact_match_drinks}
+                combined_results.update(exact_match_ids)
+
+            # For multi-word searches, also search for each meaningful word individually (OR logic)
+            if len(search_words) > 1:
+                for word in search_words:
+                    if (
+                        len(word) > 2
+                    ):  # Only search for words with more than 2 characters
+                        word_res = requests.get(
+                            API_BASE_URL + "search.php", timeout=5, params={"s": word}
+                        ).json()
+                        if word_res.get("drinks"):
+                            # Add all drinks matching this word
+                            word_match_ids = {
+                                drink["idDrink"] for drink in word_res["drinks"]
+                            }
+                            combined_results.update(word_match_ids)
+
+            result["name_query"] = combined_results if combined_results else set()
+
+        # Query by alcoholic type
+        if alcoholic_type:
+            res = requests.get(
+                API_BASE_URL + "filter.php", timeout=5, params={"a": alcoholic_type}
+            ).json()
+            drinks = res.get("drinks")
+            if drinks and isinstance(drinks, list):
+                result["alcoholic_query"] = {drink["idDrink"] for drink in drinks}
+            else:
+                result["alcoholic_query"] = set()
+
+        # Query by category
+        if category:
+            res = requests.get(
+                API_BASE_URL + "filter.php", timeout=5, params={"c": category}
+            ).json()
+            drinks = res.get("drinks")
+            if drinks and isinstance(drinks, list):
+                result["category_query"] = {drink["idDrink"] for drink in drinks}
+            else:
+                result["category_query"] = set()
+
+        # Query by ingredients (multiple)
+        if ingredient_names:
+            ingredient_sets = []
+            for ingredient_name in ingredient_names:
+                res = requests.get(
+                    API_BASE_URL + "filter.php",
+                    timeout=5,
+                    params={"i": ingredient_name},
+                ).json()
+                drinks = res.get("drinks")
+                if drinks and isinstance(drinks, list):
+                    ingredient_sets.append({drink["idDrink"] for drink in drinks})
+                else:
+                    ingredient_sets.append(set())
+
+            # Combine ingredient sets (intersection of all)
+            result["ingredient_query"] = (
+                set.intersection(*ingredient_sets) if ingredient_sets else set()
+            )
+
+        if fav_only and current_user.is_authenticated:
+            query = select(ApiDrink)
+            query = query.join(ApiFavorite, ApiFavorite.id == ApiDrink.id)
+            query = query.where(ApiFavorite.user_id == current_user.id)
+            drinks: list[ApiDrink] = db.session.execute(query).scalars().all()
+            if drinks:
+                result["fav_drinks"] = {str(drink.id) for drink in drinks}
+            else:
+                result["fav_drinks"] = set()
+
+        # Combine all queries
+        filtered_ids = (
+            set.intersection(*(query for query in result.values() if query is not None))
+            if any(result.values())
+            else set()
+        )
+
+        # If no filters applied, get all drinks
+        if not any([drink_name, alcoholic_type, category, ingredient_names, fav_only]):
+            drinks = ApiDrink.query.all()
+        else:
+            # Get drinks by ID
+            drinks = ApiDrink.query.filter(ApiDrink.id.in_(filtered_ids)).all()
+
+        favorites = {}
+        if current_user.is_authenticated:
+            for drink in drinks:
+                favorites[drink.id] = is_api_favorite(drink.id, current_user)
+
+        if drinks:
+            random_drink = rdm.choice(drinks)
+            drinks = [random_drink]  # List of one drink
+
+        return render_template(
+            "partials/drink_cards.html",
+            drinks=drinks,
+            favorites=favorites,
+            page_type="catalogo",
+        )
+
+    except requests.exceptions.Timeout:
+        return "<div class='notification is-danger'>La richiesta ha impiegato troppo tempo. Riprova più tardi.</div>"
