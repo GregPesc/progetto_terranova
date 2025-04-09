@@ -1,5 +1,6 @@
 body {
-  background-color: #eaf7f7;
+  background-color: aliceblue;
+  font-family: Larish Nue;
 }
 
 .section {
@@ -7,7 +8,8 @@ body {
 }
 
 .title-custom {
-  color: #ff3c3c;
+  color: #353839;
+  font-weight: bold;
   text-align: center;
   margin-top: 1rem;
   font-size: 3rem;
@@ -19,8 +21,8 @@ body {
 }
 
 .card-custom {
-  background-color: #eaf7f7;
-  border: 1px solid #d4d4d4;
+  background-color: #FFFFFE;
+  border: 1px solid #ddddd4;
   border-radius: 10px;
   text-align: center;
   padding: 1rem;
@@ -31,8 +33,8 @@ body {
 }
 
 .title-custom-card {
-  color: #ff3c3c;
-  font-weight: bold;
+  color: #800020;
+  font-weight: bolder;
 }
 
 .buttons-container {

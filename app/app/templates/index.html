@@ -2,35 +2,727 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container">
-  <h1 class="title is-2 mt-5 mb-5">Cronologia</h1>
+  <style>
+    /* Override or add new styles */
+    body {
+      background-color: #29292b;
+      font-family: 'Helvetica', sans-serif;
+    }
 
-  {% if history %}
-  <div class="columns is-multiline is-centered">
-    {% for drink in history %}
-    <div class="column is-one-third">
-      <a href="{{ drink.get_detail_url() }}">
+    .navbar {
+      background-color: #29292b, !important;
+    }
+
+    .footer {
+      padding: 20px;
+      background-color: #29292b;
+      color: #ffffff;
+    }
+
+    .navbar-item {
+      color: #ffffff !important;
+    }
+  </style>
+
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Larish Neue', serif;
+      overflow-x: hidden;
+      background-color: aliceblue;
+    }
+
+    .image-container {
+      display: flex;
+      flex-direction: column;
+      /* Stack images vertically */
+      align-items: center;
+      margin-top: 50px;
+      gap: 80px;
+      /* Increased space between images */
+      padding: 40px 0;
+      /* Added more padding at the top and bottom */
+    }
+
+    .scroll-image {
+      width: 100%;
+      /* Make images responsive */
+      max-width: 850px;
+      /* Increased maximum width for bigger images */
+      height: auto;
+      /* Maintain aspect ratio */
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .scroll-image.active {
+      opacity: 1;
+    }
+
+    /* Reduce space between rows of cards */
+    .column {
+      margin-bottom: 0rem;
+      /* Reduced space below each card */
+    }
+
+    .title-custom {
+      color: #29292b;
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 3rem;
+    }
+
+    .title-custom1 {
+      color: #29292b;
+      margin-left: 60px;
+      margin-top: 4rem;
+      font-size: 3rem;
+    }
+
+    .card-custom {
+      background-color: #eaf7f7;
+      border: 1px solid #d4d4d4;
+      border-radius: 10px;
+      text-align: center;
+      padding: 1rem;
+      margin: 0.5rem;
+      /* Reduced space around each card */
+    }
+
+    .card-custom img {
+      border-radius: 5px;
+    }
+
+    .title-custom-card {
+      color: #ff3c3c;
+      font-weight: bold;
+    }
+
+    .buttons-container {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .buttons-container button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    .is-clicked-heart {
+      color: white !important;
+      background-color: #ff3860 !important;
+      /* Rosso per il cuore */
+    }
+
+    .is-clicked-pencil {
+      color: white !important;
+      background-color: #23d160 !important;
+      /* Verde per la matita */
+    }
+
+    .fixed-button {
+      position: fixed !important;
+      bottom: 60px;
+      right: 60px;
+      /*per metterlo tutto a destra*/
+      z-index: 1000;
+      /*per metterlo sopra a tutti gli elementi*/
+    }
+
+    .filter-panel {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      /* Nasconde il pannello fuori dalla vista */
+      width: 400px;
+      height: 100%;
+      background-color: #f5f5f5;
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+      transition: right 0.3s ease;
+    }
+
+    .filter-panel.is-visible {
+      right: 0;
+      /* Mostra il pannello */
+      z-index: 2000;
+      /*per metterlo sopra a tutti gli elementi*/
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      /* Colore scuro traslucido */
+      z-index: 1999;
+      /* Assicurati che sia sotto al pannello */
+      display: none;
+      /* Nascondi inizialmente */
+    }
+
+    .overlay.is-visible {
+      display: block;
+      /* Mostra overlay quando visibile */
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.is-active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .esplora-button {
+      background-color: transparent !important;
+      /* Transparent background */
+      border: 1px solid #000000 !important;
+      /* Simple border */
+      color: #000000 !important;
+      /* Text color */
+      font-family: 'Sansation', sans-serif !important;
+      /* Different font */
+      font-weight: normal !important;
+      /* Normal font weight */
+      transition: all 0.3s ease !important;
+      /* Smooth transition */
+    }
+
+    .esplora-button:hover {
+      background-color: #000000 !important;
+      /* Background on hover */
+      color: #ffffff !important;
+      /* Text color on hover */
+    }
+  </style>
+
+  <div class="image-container">
+    <img src="{{ url_for('static', filename='images/drink1.jpg') }}" alt="Image 1" class="scroll-image">
+    <img src="{{ url_for('static', filename='images/drink2.jpg') }}" alt="Image 2" class="scroll-image">
+    <img src="{{ url_for('static', filename='images/drink3.jpg') }}" alt="Image 3" class="scroll-image">
+  </div>
+
+  <script>
+    const images = document.querySelectorAll('.scroll-image');
+
+    window.addEventListener('scroll', () => {
+      const viewportHeight = window.innerHeight;
+
+      images.forEach((image) => {
+        const rect = image.getBoundingClientRect();
+
+        // Check if the image is in the viewport
+        if (rect.top <= viewportHeight && rect.bottom >= 0) {
+          image.classList.add('active');
+        } else {
+          image.classList.remove('active');
+        }
+      });
+    });
+  </script>
+
+  <h1 class="title title-custom">Drink popolari</h1>
+
+  <section class="section">
+    <div class="columns is-multiline is-centered">
+      <div class="column"></div>
+      <div class="column">
         <div class="card card-custom">
           <div class="card-image">
             <figure class="image is-square">
-              <img
-                loading="lazy"
-                src="{{ drink.get_thumbnail_url() }}"
-                alt="{{ drink.name }}"
-              />
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Negroni" />
             </figure>
           </div>
           <div class="card-content">
-            <p class="title is-5 title-custom-card">{{ drink.name }}</p>
+            <p class="title is-5 title-custom-card">NEGRONI</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
           </div>
         </div>
-      </a>
+      </div>
+      <div class="column">
+        <div class="card card-custom">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Negroni" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">NEGRONI</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="card card-custom">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Negroni" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">NEGRONI</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column"></div>
     </div>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="notification is-info">
-    Non hai ancora visualizzato alcun cocktail. Esplora il catalogo!
-  </div>
-  {% endif %}
-</div>
-{% endblock content %}
+  </section>
+
+  <h1 class="title title-custom">Parte di catalogo</h1>
+
+  <section class="section">
+    <div class="columns is-multiline is-centered">
+      <div class="column"></div>
+      <div class="column">
+        <div class="card card-custom">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Negroni" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">NEGRONI</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="card card-custom">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Negroni" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">NEGRONI</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="card card-custom">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Negroni" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">NEGRONI</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="card card-custom">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Negroni" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">NEGRONI</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="columns is-multiline is-centered">
+      <div class="column"></div>
+      <div class="column">
+        <div class="card card-custom">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Negroni" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">NEGRONI</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="card card-custom">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Negroni" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">NEGRONI</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="card card-custom">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Negroni" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">NEGRONI</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="card card-custom">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Negroni" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">NEGRONI</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column"></div>
+    </div>
+  </section>
+
+
+  <!-- Add the "Esplora" button before "Cronologia" -->
+  <section class="section">
+    <div class="has-text-centered">
+      <button class="button esplora-button is-medium">Esplora</button>
+    </div>
+  </section>
+  <br><br><br>
+
+  <h1 class="title title-custom1">Cronologia</h1>
+
+  <section class="section">
+    <div class="columns is-multiline is-centered">
+      <!-- Card 1 -->
+      <div class="column is-2">
+        <div class="card card-custom small-card">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Drink 1" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">DRINK 1</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="column is-2">
+        <div class="card card-custom small-card">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Drink 2" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">DRINK 2</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="column is-2">
+        <div class="card card-custom small-card">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Drink 3" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">DRINK 3</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="column is-2">
+        <div class="card card-custom small-card">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Drink 4" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">DRINK 4</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="column is-2">
+        <div class="card card-custom small-card">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Drink 5" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">DRINK 5</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="column is-2">
+        <div class="card card-custom small-card">
+          <div class="card-image">
+            <figure class="image is-square">
+              <img src="https://www.thecocktaildb.com/images/media/drink/qgdu971561574065.jpg" alt="Drink 6" />
+            </figure>
+          </div>
+          <div class="card-content">
+            <p class="title is-5 title-custom-card">DRINK 6</p>
+            <div class="buttons-container">
+              <button class="pencil-button">
+                <span class="icon">
+                  <i class="fas fa-pen"></i>
+                </span>
+              </button>
+              <button class="heart-button">
+                <span class="icon">
+                  <i class="fas fa-heart"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Selezione di tutti i bottoni con classe heart-button
+    const heartButtons = document.querySelectorAll(".heart-button");
+    const pencilButtons = document.querySelectorAll(".pencil-button");
+
+    // Aggiunge un event listener a ciascun bottone a forma di cuore
+    heartButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        button.classList.toggle("is-clicked-heart"); // Toggle dello stato cliccato
+      });
+    });
+
+    // Aggiunge un event listener a ciascun bottone a forma di matita
+    pencilButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        button.classList.toggle("is-clicked-pencil"); // Toggle dello stato cliccato
+      });
+    });
+  </script>
+
+
+  {% endblock content %}
