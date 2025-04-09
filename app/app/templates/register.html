@@ -1,40 +1,193 @@
-{% extends "layout.html" %} {% block content %}
 <!-- prettier-ignore -->
-<form method="POST">
-  {{ form.hidden_tag() }}
-  <fieldset>
-    <legend>Registrati</legend>
-    <div>
-      {{ form.email(placeholder='Email') }}
-      {% if form.email.errors %}
-      <div>
-        {% for error in form.email.errors %}
-        <span>{{error}}</span>
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
-    <div>
-      {{ form.password(placeholder='Password') }}
-      {% if form.password.errors %}
-      <div>
-        {% for error in form.password.errors %}
-        <span>{{error}}</span>
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
-    <div>
-      {{ form.confirm_password(placeholder='Conferma password') }}
-      {% if form.confirm_password.errors %}
-      <div>
-        {% for error in form.confirm_password.errors %}
-        <span>{{error}}</span>
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
-    <div>{{ form.submit }}</div>
-  </fieldset>
-</form>
+{% extends "layout.html" %}
+{% block content %}
+<style>
+  html,
+  body {
+    height: 100%; /* Ensures the background covers the full height */
+    margin: 0;
+    font-family: Larish Nue;
+    background-color: aliceblue;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #ingredients-table th {
+    color: black !important; /* Force the text color to black */
+  }
+
+  .select select,
+  .input {
+    background-color: aliceblue !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border-radius: 10px;
+    color: #000;
+    padding: 10px;
+  }
+
+  .container {
+    max-width: 600px;
+    color: black;
+    margin: auto; /* Centers the form vertically */
+    padding-bottom: 30px; /* Extra space at the bottom */
+  }
+
+  .title1 {
+    margin-top: 20px;
+    color: #0a0a0a;
+    font-size: 44px;
+    font-weight: bold;
+    text-align: center; /* Aggiunto per centrare il testo */
+  }
+
+  form {
+    margin-top: 20px;
+  }
+
+  .form-control {
+    width: 100%; /* Gli input occupano tutta la larghezza disponibile */
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+  }
+  button {
+    margin-top: 10px;
+  }
+  .form-label {
+    font-size: 22px;
+    display: block; /* Makes labels take full width, forcing inputs below */
+  }
+  .gif-container {
+    margin-left: -100px; /* Adds space between the form and the GIF */
+  }
+  .gif-container img {
+    max-width: 100%; /* Ensures the image is responsive */
+    height: auto; /* Maintains aspect ratio */
+    opacity: 0.7; /* Slightly transparent */
+  }
+
+  .button {
+    background-color: transparent !important; /* Transparent background */
+    border: 1px solid #000000 !important; /* Simple border */
+    color: #000000 !important; /* Text color */
+    font-family: "Sansation", sans-serif !important; /* Different font */
+    font-weight: normal !important; /* Normal font weight */
+    transition: all 0.3s ease !important; /* Smooth transition */
+    margin-left: 5px;
+  }
+
+  .button:hover {
+    background-color: #000000 !important; /* Background on hover */
+    color: #ffffff !important; /* Text color on hover */
+  }
+
+  .table {
+    background-color: white; /* Set the table background to white */
+    color: black; /* Set the text color to black for readability */
+    border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+  }
+
+  .table th,
+  .table td {
+    border: 1px solid #ccc; /* Add borders to table cells */
+    padding: 10px; /* Add padding for better spacing */
+  }
+
+  .table th {
+    color: black; /* Set the text color of table headers to black */
+  }
+
+  .centered-form {
+    display: flex;
+    justify-content: center;
+  }
+
+  .fieldset {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 30px;
+    background-color: white;
+  }
+
+  form-label {
+    display: inline-block; /* Le label sono più corte */
+    width: 150px; /* Imposta una larghezza fissa per le label */
+    margin-bottom: 10px; /* Spazio tra la label e l'input */
+  }
+
+  .form-control,
+  .form-label {
+    margin-bottom: 15px; /* Distanza tra ogni campo */
+  }
+
+  .button-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; /* opzionale: spazio sopra il pulsante */
+  }
+
+  .button {
+    width: 100%;
+  }
+</style>
+
+<!-- prettier-ignore -->
+<div class="container">
+
+    <fieldset class="fieldset">
+      <legend style="font-size: 24px; margin-bottom: 0px;">Crea il tuo account</legend>
+
+      <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div>
+          <label class="form-label" for="email">Email</label>
+          {{ form.email(id='email', placeholder='Email', class_='form-control') }}
+          {% if form.email.errors %}
+            <div>
+              {% for error in form.email.errors %}
+                <span style="color: red;">{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div>
+          <label class="form-label" for="password">Password</label>
+          {{ form.password(id='password', placeholder='Password', class_='form-control') }}
+          {% if form.password.errors %}
+            <div>
+              {% for error in form.password.errors %}
+                <span style="color: red;">{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div>
+          <label class="form-label" for="confirm_password">Conferma Password</label>
+          {{ form.confirm_password(id='confirm_password', placeholder='Conferma password', class_='form-control') }}
+          {% if form.confirm_password.errors %}
+            <div>
+              {% for error in form.confirm_password.errors %}
+                <span style="color: red;">{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="button-wrapper">
+          {{ form.submit(class_='button') }}
+        </div>
+      </form>
+    </fieldset>
+ 
+</div>
 {% endblock content %}
