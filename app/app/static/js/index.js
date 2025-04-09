@@ -24,3 +24,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+// Heart and pencil button behavior
+document.body.addEventListener("click", function (e) {
+  if (e.target.closest(".trash-button")) {
+    e.target.closest(".trash-button").classList.toggle("is-clicked-trash");
+  }
+
+  if (e.target.closest(".heart-button")) {
+    e.target.closest(".heart-button").classList.toggle("is-clicked-heart");
+  }
+});
+
+const images = document.querySelectorAll(".scroll-image");
+
+window.addEventListener("scroll", () => {
+  const viewportHeight = window.innerHeight;
+
+  images.forEach((image) => {
+    const rect = image.getBoundingClientRect();
+
+    // Check if the image is in the viewport
+    if (rect.top <= viewportHeight && rect.bottom >= 0) {
+      image.classList.add("active");
+    } else {
+      image.classList.remove("active");
+    }
+  });
+});
