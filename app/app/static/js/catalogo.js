@@ -1,14 +1,3 @@
-// Heart and pencil button behavior
-document.body.addEventListener("click", function (e) {
-  if (e.target.closest(".trash-button")) {
-    e.target.closest(".trash-button").classList.toggle("is-clicked-trash");
-  }
-
-  if (e.target.closest(".heart-button")) {
-    e.target.closest(".heart-button").classList.toggle("is-clicked-heart");
-  }
-});
-
 // Seleziona elementi
 const toggleButton = document.getElementById("toggleFilters");
 const closeButton = document.getElementById("closeFilters");

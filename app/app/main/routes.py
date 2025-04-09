@@ -40,7 +40,14 @@ API_BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
 @main.route("/")
 def home():
     drinks = get_history_drinks()
-    return render_template("index.html", title="Applicazione", history=drinks)
+    drink = UserDrink.query.first()
+    return render_template(
+        "index.html",
+        title="Applicazione",
+        history_drinks=drinks,
+        drink=drink,
+        favorites=[],
+    )
 
 
 @main.route("/catalogo")
