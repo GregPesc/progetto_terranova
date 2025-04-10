@@ -1,0 +1,94 @@
+/* Styling for the manage ingredients page */
+.ingredients-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.ingredients-section {
+  background-color: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ingredients-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.ingredient-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: aliceblue;
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.ingredient-item:hover {
+  background-color: #e6f2ff;
+}
+
+.ingredient-name {
+  font-size: 1.1rem;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-button:hover {
+  color: #ff0000;
+  transform: scale(1.2);
+}
+
+.add-ingredient-form {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.form-header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.add-button {
+  background-color: transparent !important;
+  border: 1px solid black !important;
+  color: black !important;
+  font-weight: normal !important;
+  transition: all 0.3s ease !important;
+  margin-top: 15px;
+}
+
+.add-button:hover {
+  background-color: black !important;
+  color: #ffffff !important;
+}
+
+.standard-ingredients {
+  opacity: 0.7;
+}
+
+.no-ingredients {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 15px;
+  font-style: italic;
+  color: #666;
+}
+
+@media screen and (max-width: 768px) {
+  .ingredients-list {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}

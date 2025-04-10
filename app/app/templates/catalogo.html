@@ -42,12 +42,18 @@
 
 <!--Bottone per aggiungere un drink-->
 {% if page_type == "mybar" %}
-<div class="is-flex is-justify-content-center">
+<div class="is-flex is-justify-content-center gap-3">
   <a
     href="{{ url_for('manage_recipes.add_custom_recipe') }}"
-    class="button is-primary"
+    class="button is-primary mx-3"
   >
     Aggiungi un drink
+  </a>
+  <a
+    href="{{ url_for('manage_recipes.manage_ingredients') }}"
+    class="button is-info mx-3"
+  >
+    Gestisci ingredienti
   </a>
 </div>
 {% endif %}
