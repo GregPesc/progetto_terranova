@@ -36,6 +36,7 @@ document.body.addEventListener("click", function (e) {
   }
 });
 
+// homepage
 const images = document.querySelectorAll(".scroll-image");
 
 window.addEventListener("scroll", () => {

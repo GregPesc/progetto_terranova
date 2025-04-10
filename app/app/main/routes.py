@@ -204,7 +204,7 @@ def specific_api(drink_id: int):
 
         drink.alcoholic_type = api_drink.get("strAlcoholic")
         drink.category = api_drink.get("strCategory")
-        drink.instructions = api_drink.get("strInstructions")
+        drink.instructions = api_drink.get("strInstructionsIT")
 
         # Check if it's a favorite
         is_favorite = False
