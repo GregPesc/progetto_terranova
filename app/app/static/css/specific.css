@@ -68,3 +68,7 @@ ul.content {
 .is-clicked-heart-bg {
   background-color: rgb(241, 186, 186);
 }
+
+body {
+  min-height: 100vh;
+}

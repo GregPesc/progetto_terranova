@@ -99,6 +99,7 @@ def home():
         catalog_drinks=catalog_drinks,
         favorites=favorites,
         images=images,
+        is_logged=current_user.is_authenticated,
     )
 
 
@@ -166,6 +167,7 @@ def mybar():
         categories=categories,
         alcoholic_types=alcoholic_types,
         message="Non hai drink nel bar. Aggiungine uno adesso!",
+        is_logged=current_user.is_authenticated,
     )
 
 
@@ -229,6 +231,7 @@ def specific_api(drink_id: int):
                 drink=drink,
                 ingredients=ingredients,
                 is_favorite=is_favorite,
+                is_logged=current_user.is_authenticated,
             )
         )
 

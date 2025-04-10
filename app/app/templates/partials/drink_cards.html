@@ -19,6 +19,7 @@
     </a>
     <div class="card-content">
       <p class="title is-5 title-custom-card">{{ drink.name }}</p>
+      {% if is_logged %}
       <div class="buttons-container">
         <button
           class="heart-button {{ 'is-clicked-heart' if favorites[drink.id] }}"
@@ -43,6 +44,7 @@
         </button>
         {% endif %}
       </div>
+      {% endif %}
     </div>
   </div>
 </div>

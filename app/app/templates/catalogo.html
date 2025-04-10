@@ -16,7 +16,7 @@
       id="main-search-bar"
       class="input is-expanded"
       type="text"
-      placeholder="cerca qui"
+      placeholder="Cerca..."
       name="name"
       hx-get="{% if page_type == 'mybar'%}{{ url_for('main.filter_mybar') }}{% else %}{{ url_for('main.filter_catalog') }}{% endif %}"
       hx-trigger="keyup changed delay:500ms, search"
