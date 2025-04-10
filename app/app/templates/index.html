@@ -25,7 +25,11 @@
       {% endwith %}
       {% else %}
       <div class="notification is-info">
+        {% if is_logged %}
+        Inizia a salvare preferiti!
+        {% else %}
         Fai il login per iniziare a salvare i preferiti!
+        {% endif %}
       </div>
       {% endif %}
   </section>
