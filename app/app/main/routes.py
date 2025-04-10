@@ -129,6 +129,7 @@ def catalogo():
         ingredients=ingredients,
         categories=categories,
         alcoholic_types=alcoholic_types,
+        is_logged=current_user.is_authenticated,
     )
 
 

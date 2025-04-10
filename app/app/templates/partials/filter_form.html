@@ -1,4 +1,5 @@
 <form id="filter-form">
+  {% if is_logged %}
   <!-- Preferiti filtro -->
   <div class="field">
     <div class="control">
@@ -16,6 +17,7 @@
       </label>
     </div>
   </div>
+  {% endif %}
 
   <!-- Alcoholic Type Selection -->
   <div class="field">
