@@ -493,6 +493,7 @@ def filter_catalog():
             drinks=drinks,
             favorites=favorites,
             page_type="catalogo",
+            is_logged=current_user.is_authenticated,
         )
 
     except requests.exceptions.Timeout:
@@ -568,6 +569,7 @@ def filter_mybar():
         drinks=drinks,
         favorites=favorites,
         page_type="mybar",
+        is_logged=current_user.is_authenticated,
     )
 
 
