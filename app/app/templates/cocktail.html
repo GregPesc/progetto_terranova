@@ -1,209 +1,93 @@
+<!-- prettier-ignore -->
 {% extends "layout.html" %}
+{% block head %}
+
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/specific.css') }}"
+/>
+
+<!-- prettier-ignore -->
+{% endblock %}
 {% block content %}
-
-<style>
-  .section {
-    background-color: #ffffff;
-    /* Light background color */
-  }
-
-  .rounded-image {
-    border-radius: 33px;
-    /* Adjust the radius as needed */
-    border: 3px solid #1f1f1f;
-    /* Optional: Add a border for better appearance */
-  }
-
-  ul.content {
-    list-style-type: disc;
-    /* Lista puntata */
-    padding-left: 20px;
-    /* Ensure some left margin for the bullet points */
-  }
-
-  .custom-title {
-    font-size: 5.7rem;
-    /* You can adjust this value as needed */
-  }
-
-  .title {
-    color: #000000;
-    /* Dark text color for title */
-  }
-
-  .content li {
-    color: #3e3f3f;
-    /* Blue text for ingredients */
-  }
-
-  .instructions-section {
-    color: #3e3f3f;
-  }
-
-  .circular-button {
-    position: relative;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    padding: 0;
-    border: 2px solid #000000;
-    background-color: transparent;
-  }
-
-  .circular-button img {
-    margin: 0;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -46%) scale(0.8);
-    position: absolute;
-  }
-
-  .buttons-container {
-    margin-top: 60px;
-    /* Adds space above the buttons */
-    display: flex;
-    /* Use flexbox to center the buttons */
-    justify-content: center;
-    /* Centers the buttons horizontally */
-    gap: 20px;
-    /* Optional: adds spacing between the buttons */
-  }
-</style>
-
-
-<script>
-  async function fetchCocktail() {
-    const cocktailName = document.getElementById('cocktail-name').value;
-    const resultDiv = document.getElementById('result');
-
-    // Clear previous results
-    resultDiv.innerHTML = '';
-
-    try {
-      const response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${cocktailName}&lang=it`);
-      const data = await response.json();
-
-      if (data.drinks) {
-        const cocktail = data.drinks[0];
-
-        // Create Title
-        const title = document.createElement('h1');
-        title.textContent = cocktail.strDrink;
-        title.className = 'title has-text-centered custom-title';
-        title.style.marginBottom = '120px';  // Adjust margin directly on the title
-
-        // Create Columns Container
-        const container = document.createElement('div');
-        container.className = 'columns is-vcentered';
-        container.style.marginBottom = '90px';
-
-        // spacer column
-        const spacerColumn1 = document.createElement('div');
-        spacerColumn1.className = 'column is-1';
-
-        // Create Image Column
-        const imageColumn = document.createElement('div');
-        imageColumn.className = 'column is-5'; // Adjust size as needed
-
-        const img = document.createElement('img');
-        img.src = cocktail.strDrinkThumb;
-        img.alt = cocktail.strDrink;
-        img.className = 'image rounded-image'; // Add custom class for rounded borders
-
-        imageColumn.appendChild(img);
-
-        // spacer column
-        const spacerColumn = document.createElement('div');
-        spacerColumn.className = 'column is-narrow';
-
-        // Create Ingredients Column
-        const ingredientsColumn = document.createElement('div');
-        ingredientsColumn.className = 'column is-offset-1';
-
-        const ingredientsHeading = document.createElement('h3');
-        ingredientsHeading.textContent = 'Ingredienti';
-        ingredientsHeading.className = 'title is-2';
-
-        const ul = document.createElement('ul');
-        ul.className = 'content is-size-4';
-
-        for (let i = 1; i <= 15; i++) {
-          const ingredient = cocktail[`strIngredient${i}`];
-          const measure = cocktail[`strMeasure${i}`];
-
-          if (ingredient) {
-            const li = document.createElement('li');
-            li.textContent = `${measure ? measure : ''} ${ingredient}`;
-            ul.appendChild(li);
-          }
-        }
-
-        ingredientsColumn.appendChild(ingredientsHeading);
-        ingredientsColumn.appendChild(ul);
-
-        // Append Image and Ingredients Columns to Container
-        container.appendChild(spacerColumn1);
-        container.appendChild(imageColumn);
-        container.appendChild(spacerColumn);
-        container.appendChild(ingredientsColumn);
-
-        // Append Title and Container to Result Div
-        resultDiv.appendChild(title);
-        resultDiv.appendChild(container);
-
-        // Create Instructions Section (Added outside column container)
-        const instructionsSection = document.createElement('div');
-        instructionsSection.className = 'instructions-section';
-
-        const instructionsHeading = document.createElement('h3');
-        instructionsHeading.textContent = 'Procedimento';
-        instructionsHeading.className = 'title is-2 has-text-centered';
-
-
-        const instructionsText = document.createElement('p');
-        instructionsText.textContent = cocktail.strInstructions; // API instruction text
-        instructionsText.className = 'has-text-centered is-size-5';
-
-        instructionsSection.appendChild(instructionsHeading);
-        instructionsSection.appendChild(instructionsText);
-
-        // Append Instructions Section after the container
-        resultDiv.appendChild(instructionsSection);
-      } else {
-        resultDiv.textContent = 'Cocktail not found. Please try another name.';
-      }
-    } catch (error) {
-      console.error(error);
-      resultDiv.textContent = 'An error occurred while fetching data.';
-    }
-  }
-</script>
 
 <section class="section">
   <div class="container">
-    <h1 class="title"> </h1>
-    <div class="field has-addons">
-      <div class="control is-expanded">
-        <input id="cocktail-name" class="input" type="text" placeholder="Enter cocktail name">
+    <div id="result">
+      <h1
+        class="title has-text-centered custom-title"
+        style="margin-bottom: 120px"
+      >
+        {{ drink.name }}
+      </h1>
+
+      <!-- Added category and alcohol information -->
+      <div class="columns is-centered" style="margin-bottom: 30px">
+        <div class="column is-narrow">
+          <div class="tags are-medium">
+            <span class="tag is-info">{{ drink.get_category_display() }}</span>
+            <span
+              class="tag {% if drink.alcoholic_type == 'Alcoholic' %}is-danger{% elif drink.alcoholic == 'Non alcoholic' %}is-success{% else %}is-warning{% endif %}"
+            >
+              {{ drink.get_alcoholic_type_display() }}
+            </span>
+          </div>
+        </div>
       </div>
-      <div class="control">
-        <button class="button is-primary" onclick="fetchCocktail()">Search</button>
+
+      <div class="columns is-vcentered" style="margin-bottom: 90px">
+        <div class="column is-1"></div>
+        <div class="column is-5">
+          <img
+            src="{{ drink.get_thumbnail_url()|default( url_for('static', filename='images/drink_placeholder.jpg'), true ) }}"
+            alt="Image of {{ drink.name }}"
+            class="image rounded-image"
+          />
+        </div>
+        <div class="column is-narrow"></div>
+        <div class="column is-offset-1">
+          <h3 class="title is-2">Ingredienti</h3>
+          <ul class="content is-size-4">
+            {% if ingredients %} {% for i in ingredients %}
+            <li>
+              {{ i.name }} {% if i.measure %} | {{ i.measure }} {% endif %}
+            </li>
+            {% endfor%} {% else %}
+            <p>Questo drink non ha ingredienti.</p>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+      <div class="instructions-section">
+        <h3 class="title is-2 has-text-centered">Ricetta</h3>
+        <p class="has-text-centered is-size-5">
+          {{ drink.instructions|default('Questo drink non ha una ricetta.',
+          true) }}
+        </p>
       </div>
     </div>
-    <div id="result"></div>
-  </div>
 
-  <div class="buttons-container">
-    <div class="buttons">
-      <button class="circular-button">
-        <img src="{{ url_for('static', filename='images/edit-icon.png') }}">
-      </button>
-      <button class="circular-button">
-        <img src="{{ url_for('static', filename='images/heart-icon.png') }}">
-      </button>
+    <div class="buttons-container">
+      <div class="buttons">
+        <button
+          class="circular-button heart-button {{ 'is-clicked-heart is-clicked-heart-bg' if is_favorite }}"
+          hx-post="{% if drink.is_local() %} {{ url_for('favorite.toggle_user_local_favorite', favorite_id=drink.id) }} {% else %} {{ url_for('favorite.toggle_user_api_favorite', favorite_id=drink.id) }} {% endif %}"
+          hx-swap="none"
+        >
+          <span class="icon">
+            <i class="fas fa-heart"></i>
+          </span>
+        </button>
+      </div>
     </div>
   </div>
-  </div>
-
 </section>
+
+<script>
+  document.body.addEventListener("click", function (e) {
+    if (e.target.closest(".heart-button")) {
+      e.target.closest(".heart-button").classList.toggle("is-clicked-heart-bg");
+    }
+  });
+</script>
 {% endblock content %}
