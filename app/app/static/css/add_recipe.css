@@ -1,0 +1,127 @@
+html,
+body {
+  height: 100%;
+  /* Ensures the background covers the full height */
+  margin: 0;
+  font-family: Larish Nue;
+  background-color: aliceblue;
+  display: flex;
+  flex-direction: column;
+}
+
+#ingredients-table th {
+  color: black !important;
+  /* Force the text color to black */
+}
+
+.select select,
+.input {
+  background-color: aliceblue !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-radius: 10px;
+  color: #000;
+  padding: 10px;
+}
+
+.container {
+  max-width: 600px;
+  color: black;
+  margin: auto;
+  /* Centers the form vertically */
+  padding-bottom: 30px;
+  /* Extra space at the bottom */
+}
+
+.title1 {
+  margin-top: 20px;
+  color: #0a0a0a;
+  font-size: 44px;
+  font-weight: bold;
+  text-align: center;
+  /* Aggiunto per centrare il testo */
+}
+
+form {
+  margin-top: 20px;
+}
+
+.form-control {
+  width: 70%;
+  /* Ensures inputs take full width of their container */
+  border-radius: 15px;
+  /* Keeps the rounded edges */
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: white;
+}
+
+button {
+  margin-top: 10px;
+}
+
+.form-label {
+  font-size: 22px;
+  display: block;
+  /* Makes labels take full width, forcing inputs below */
+}
+
+.gif-container {
+  margin-left: -100px;
+  /* Adds space between the form and the GIF */
+}
+
+.gif-container img {
+  max-width: 100%;
+  /* Ensures the image is responsive */
+  height: auto;
+  /* Maintains aspect ratio */
+  opacity: 0.7;
+  /* Slightly transparent */
+}
+
+.button {
+  background-color: transparent !important;
+  /* Transparent background */
+  border: 1px solid #000000 !important;
+  /* Simple border */
+  color: #000000 !important;
+  /* Text color */
+  font-family: "Sansation", sans-serif !important;
+  /* Different font */
+  font-weight: normal !important;
+  /* Normal font weight */
+  transition: all 0.3s ease !important;
+  /* Smooth transition */
+  margin-left: 5px;
+}
+
+.button:hover {
+  background-color: #000000 !important;
+  /* Background on hover */
+  color: #ffffff !important;
+  /* Text color on hover */
+}
+
+.table {
+  background-color: white;
+  /* Set the table background to white */
+  color: black;
+  /* Set the text color to black for readability */
+  border: 1px solid #ccc;
+  /* Optional: Add a border for better visibility */
+}
+
+.table th,
+.table td {
+  border: 1px solid #ccc;
+  /* Add borders to table cells */
+  padding: 10px;
+  /* Add padding for better spacing */
+}
+
+.table th {
+  color: black;
+  /* Set the text color of table headers to black */
+}
