@@ -51,7 +51,7 @@
   <section class="section">
     <div class="columns is-multiline is-centered">
       {% if history_drinks %}
-      {% with drinks=fav_drinks, col_class="is-one-quarter" %}
+      {% with drinks=history_drinks, col_class="is-one-quarter" %}
       {% include "partials/drink_cards.html" %}
       {% endwith %}
       {% else %}

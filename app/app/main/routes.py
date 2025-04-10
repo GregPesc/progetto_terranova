@@ -43,7 +43,7 @@ API_BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
 
 @main.route("/")
 def home():
-    drinks = get_history_drinks()
+    history_drinks = get_history_drinks()
 
     query = (
         select(UserDrink)
@@ -72,7 +72,7 @@ def home():
 
     # If user is authenticated, check which drinks are favorites
     if current_user.is_authenticated:
-        for drink in itertools.chain(drinks, fav_drinks, catalog_drinks):
+        for drink in itertools.chain(history_drinks, fav_drinks, catalog_drinks):
             favorites[drink.id] = any(
                 (
                     is_api_favorite(drink.id, current_user),
@@ -89,7 +89,7 @@ def home():
     return render_template(
         "index.html",
         title="Applicazione",
-        history_drinks=drinks,
+        history_drinks=history_drinks,
         fav_drinks=fav_drinks,
         catalog_drinks=catalog_drinks,
         favorites=favorites,
