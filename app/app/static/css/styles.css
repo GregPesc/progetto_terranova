@@ -1,5 +1,5 @@
 body {
-  font-family: "Larish Neue", serif;
+  font-family: "Sensation", sans-serif;
   background-color: #ffffff;
   min-height: 100vh;
 }
@@ -19,6 +19,18 @@ body {
 
 .navbar-start {
   gap: 20px;
+}
+
+nav {
+  background-color: #f7f7f7 !important;
+}
+
+a.navbar-item:hover {
+  background-color: #eee;
+}
+
+nav a.button:hover {
+  background-color: #eee;
 }
 
 /* end navbar */

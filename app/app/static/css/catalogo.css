@@ -1,5 +1,5 @@
 body {
-  background-color: #eaf7f7;
+  background-color: #f9f9f9;
 }
 
 .section {
@@ -7,7 +7,7 @@ body {
 }
 
 .title-custom {
-  color: #ff3c3c;
+  color: #fe4a49;
   text-align: center;
   margin-top: 1rem;
   font-size: 3rem;
@@ -19,7 +19,7 @@ body {
 }
 
 .card-custom {
-  background-color: #eaf7f7;
+  background-color: #f0f0f0;
   border: 1px solid #d4d4d4;
   border-radius: 10px;
   text-align: center;
@@ -31,7 +31,7 @@ body {
 }
 
 .title-custom-card {
-  color: #ff3c3c;
+  color: #fe4a49;
   font-weight: bold;
 }
 
@@ -139,4 +139,12 @@ figure.image img {
 
 .big-checkbox {
   transform: scale(1.3);
+}
+
+label.label {
+  color: #3e3f3f;
+}
+
+.fa-sliders-h {
+  color: #a0a0a0;
 }

@@ -23,7 +23,7 @@ ul.content {
 }
 
 .title {
-  color: #000000;
+  color: black;
   /* Dark text color for title */
 }
 
@@ -42,7 +42,7 @@ ul.content {
   height: 50px;
   border-radius: 50%;
   padding: 0;
-  border: 2px solid #000000;
+  border: 2px solid black;
   background-color: transparent;
 }
 

@@ -1,9 +1,6 @@
-html,
 body {
   /* Ensures the background covers the full height */
   margin: 0;
-  font-family: Larish Nue;
-  background-color: aliceblue;
   display: flex;
   flex-direction: column;
 }
@@ -20,7 +17,7 @@ body {
   box-shadow: none !important;
   outline: none !important;
   border-radius: 10px;
-  color: #000;
+  color: black;
   padding: 10px;
 }
 
@@ -35,7 +32,7 @@ body {
 
 .title1 {
   margin-top: 20px;
-  color: #0a0a0a;
+  color: #fe4a49;
   font-size: 44px;
   font-weight: bold;
   text-align: center;
@@ -83,9 +80,9 @@ button {
 .button {
   background-color: transparent !important;
   /* Transparent background */
-  border: 1px solid #000000 !important;
+  border: 1px solid black !important;
   /* Simple border */
-  color: #000000 !important;
+  color: black !important;
   /* Text color */
   font-family: "Sansation", sans-serif !important;
   /* Different font */
@@ -97,7 +94,7 @@ button {
 }
 
 .button:hover {
-  background-color: #000000 !important;
+  background-color: black !important;
   /* Background on hover */
   color: #ffffff !important;
   /* Text color on hover */
@@ -123,4 +120,8 @@ button {
 .table th {
   color: black;
   /* Set the text color of table headers to black */
+}
+
+form {
+  font-size: 1.1rem;
 }
