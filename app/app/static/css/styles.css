@@ -1,6 +1,7 @@
 body {
   font-family: "Larish Neue", serif;
   background-color: #ffffff;
+  min-height: 100vh;
 }
 
 /* navbar */
