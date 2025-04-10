@@ -32,8 +32,12 @@
     {% endif %}
   </head>
 
-  <body>
-    <nav class="navbar is-white" role="navigation" aria-label="menu principale">
+  <body class="has-navbar-fixed-top">
+    <nav
+      class="navbar is-white is-fixed-top"
+      role="navigation"
+      aria-label="menu principale"
+    >
       <div class="navbar-brand">
         <a
           class="navbar-item"
@@ -138,7 +142,9 @@
     {% endwith %}
 
     <!-- Start page content -->
-    <main id="content">{% block content %}{% endblock content %}</main>
+    <main id="content" class="px-2">
+      {% block content %}{% endblock content %}
+    </main>
     <!-- End page content -->
 
     <script src="{{ url_for('static', filename='js/htmx.min.js') }}"></script>

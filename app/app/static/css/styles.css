@@ -10,6 +10,13 @@ body {
   max-height: 100px;
 }
 
+/* Mobile responsive navbar logo */
+@media screen and (max-width: 768px) {
+  .navbar-brand img {
+    max-height: 50px;
+  }
+}
+
 .navbar-start {
   gap: 20px;
 }
