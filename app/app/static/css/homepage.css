@@ -1,0 +1,79 @@
+.footer {
+  padding: 20px;
+  background-color: #29292b;
+  color: #ffffff;
+}
+
+.image-container {
+  display: flex;
+  flex-direction: column;
+  /* Stack images vertically */
+  align-items: center;
+  margin-top: 50px;
+  gap: 80px;
+  /* Increased space between images */
+  padding: 40px 0;
+  /* Added more padding at the top and bottom */
+}
+
+.scroll-image {
+  width: 100%;
+  /* Make images responsive */
+  max-width: 850px;
+  /* Increased maximum width for bigger images */
+  height: auto;
+  /* Maintain aspect ratio */
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.scroll-image.active {
+  opacity: 1;
+}
+
+/* Reduce space between rows of cards */
+.column {
+  margin-bottom: 0rem;
+  /* Reduced space below each card */
+}
+
+.title-custom {
+  color: #29292b;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 3rem;
+}
+
+.title-custom1 {
+  color: #29292b;
+  margin-left: 60px;
+  margin-top: 4rem;
+  font-size: 3rem;
+}
+
+.card-custom {
+  margin: 0.5rem;
+  /* Reduced space around each card */
+}
+
+.esplora-button {
+  background-color: transparent !important;
+  /* Transparent background */
+  border: 1px solid #000000 !important;
+  /* Simple border */
+  color: #000000 !important;
+  /* Text color */
+  font-family: "Sansation", sans-serif !important;
+  /* Different font */
+  font-weight: normal !important;
+  /* Normal font weight */
+  transition: all 0.3s ease !important;
+  /* Smooth transition */
+}
+
+.esplora-button:hover {
+  background-color: #000000 !important;
+  /* Background on hover */
+  color: #ffffff !important;
+  /* Text color on hover */
+}

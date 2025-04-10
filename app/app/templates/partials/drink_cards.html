@@ -1,39 +1,27 @@
 {% for drink in drinks %}
-<div class="column is-one-third" id="drink-{{ drink.id }}">
+<div class="column {{ col_class|default('is-one-third') }}" id="drink-{{ drink.id }}">
   <div class="card card-custom">
     <a
-      href="{% if page_type == 'mybar'%} {{ url_for('main.specific_local', drink_id=drink.id) }} {% else %} {{ url_for('main.specific_api', drink_id=drink.id) }} {% endif %}"
-    >
+      href="{% if drink.is_local() %} {{ url_for('main.specific_local', drink_id=drink.id) }} {% else %} {{ url_for('main.specific_api', drink_id=drink.id) }} {% endif %}">
       <div class="card-image">
         <figure class="image is-square">
-          <img
-            loading="lazy"
-            src="{{ drink.get_thumbnail_url() }}"
-            alt="{{ drink.name }}"
-          />
+          <img loading="lazy" src="{{ drink.get_thumbnail_url() }}" alt="{{ drink.name }}" />
         </figure>
       </div>
     </a>
     <div class="card-content">
       <p class="title is-5 title-custom-card">{{ drink.name }}</p>
       <div class="buttons-container">
-        <button
-          class="heart-button {{ 'is-clicked-heart' if favorites[drink.id] }}"
-          hx-post="{% if page_type == 'mybar'%} {{ url_for('favorite.toggle_user_local_favorite', favorite_id=drink.id) }} {% else %} {{ url_for('favorite.toggle_user_api_favorite', favorite_id=drink.id) }} {% endif %}"
-          hx-swap="none"
-        >
+        <button class="heart-button {{ 'is-clicked-heart' if favorites[drink.id] }}"
+          hx-post="{% if drink.is_local() %} {{ url_for('favorite.toggle_user_local_favorite', favorite_id=drink.id) }} {% else %} {{ url_for('favorite.toggle_user_api_favorite', favorite_id=drink.id) }} {% endif %}"
+          hx-swap="none">
           <span class="icon">
             <i class="fas fa-heart"></i>
           </span>
         </button>
-        {% if page_type == 'mybar'%}
-        <button
-          class="trash-button"
-          hx-post="{{ url_for('manage_recipes.delete_custom_recipe', drink_id=drink.id) }}"
-          hx-swap="outerHTML"
-          hx-target="#drink-{{ drink.id }}"
-          hx-trigger="click"
-        >
+        {% if drink.is_local() %}
+        <button class="trash-button" hx-post="{{ url_for('manage_recipes.delete_custom_recipe', drink_id=drink.id) }}"
+          hx-swap="outerHTML" hx-target="#drink-{{ drink.id }}" hx-trigger="click">
           <span class="icon">
             <i class="fas fa-trash"></i>
           </span>

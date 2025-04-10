@@ -1,3 +1,8 @@
+body {
+  font-family: "Larish Neue", serif;
+  background-color: #ffffff;
+}
+
 /* navbar */
 
 .navbar-brand img {
@@ -18,4 +23,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.is-clicked-heart {
+  color: #ff3860;
+}
+
+.is-clicked-trash {
+  color: red;
 }
