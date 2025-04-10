@@ -74,7 +74,13 @@
 </section>
 
 <!-- Bottone dado -->
-<button class="button is-primary is-large fixed-button" id="diceButton">
+<button
+  class="button is-primary is-large fixed-button"
+  id="diceButton"
+  hx-target="#modal-content"
+  hx-get="{% if page_type == 'catalogo' %}{{ url_for('main.random_catalog') }}{% else %}{{ url_for('main.random_mybar') }}{% endif %}"
+  hx-include="#filter-form, #main-search-bar"
+>
   <span class="icon is-large">
     <i class="fas fa-dice"></i>
   </span>
@@ -85,25 +91,7 @@
   <div class="modal-background">
     <button id="bottonemodale" class="delete is-pulled-right"></button>
   </div>
-  <div class="card card-custom-modal">
-    <div class="card-image">
-      <figure class="image is-square">
-        <img
-          src="https://via.placeholder.com/150x150?text=Negroni"
-          alt="Negroni"
-        />
-      </figure>
-    </div>
-    <div class="card-content">
-      <hr />
-      <p class="title is-5 title-custom-card">NEGRONI</p>
-      <p href="#" class="link">
-        Scopri il drink<span class="icon is-small ml-1">
-          <i class="fas fa-arrow-right"></i>
-        </span>
-      </p>
-    </div>
-  </div>
+  <div class="modal-content" id="modal-content"></div>
 </div>
 <script src="{{ url_for('static', filename='js/catalogo.js') }}"></script>
 {% endblock content %}

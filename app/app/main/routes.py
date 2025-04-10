@@ -1,7 +1,6 @@
 import itertools
 import random
 import uuid
-import random as rdm
 
 import requests
 from flask import (
@@ -12,6 +11,7 @@ from flask import (
     render_template_string,
     request,
     send_from_directory,
+    url_for,
 )
 from flask_login import current_user, login_required
 from sqlalchemy import or_, select
@@ -556,9 +556,9 @@ def filter_mybar():
     )
 
 
-@main.route("/htmx/filter-random")
-def filter_random():
-    """Filter catalog drinks with HTMX."""
+@main.route("/htmx/random-catalog")
+def random_catalog():
+    """Get random catalog drink with HTMX."""
     drink_name = request.args.get("name", "").strip()
     alcoholic_type = request.args.get("type", "")
     category = request.args.get("category", "")
@@ -567,11 +567,11 @@ def filter_random():
 
     # Use the API to filter drinks
     result = {
-    "name_query": None,
-    "alcoholic_query": None,
-    "category_query": None,
-    "ingredient_query": None,
-    "fav_drinks": None,
+        "name_query": None,
+        "alcoholic_query": None,
+        "category_query": None,
+        "ingredient_query": None,
+        "fav_drinks": None,
     }
 
     try:
@@ -681,15 +681,109 @@ def filter_random():
                 favorites[drink.id] = is_api_favorite(drink.id, current_user)
 
         if drinks:
-            random_drink = rdm.choice(drinks)
-            drinks = [random_drink]  # List of one drink
+            random_drink = random.choice(drinks)  # noqa: S311
 
-        return render_template(
-            "partials/drink_cards.html",
-            drinks=drinks,
-            favorites=favorites,
-            page_type="catalogo",
-        )
+        return f"""
+            <div class="card card-custom-modal">
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                    <img src="{random_drink.get_thumbnail_url()}" alt="{random_drink.name}" class="image is-square" />
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <p class="title is-5 title-custom-card">{random_drink.name}</p>
+                    <a href="{url_for('main.specific_api', drink_id=random_drink.id)}" class="link">
+                    Scopri il drink<span class="icon is-small ml-1">
+                        <i class="fas fa-arrow-right"></i>
+                    </span>
+                    </a>
+                </div>
+            </div>
+            """
 
     except requests.exceptions.Timeout:
         return "<div class='notification is-danger'>La richiesta ha impiegato troppo tempo. Riprova più tardi.</div>"
+
+
+@main.route("/htmx/random-mybar")
+def random_mybar():
+    """Filter mybar drinks with HTMX."""
+    query = select(UserDrink)
+
+    # Check if user has any drinks before proceeding
+    user_has_drinks = (
+        db.session.query(UserDrink).filter_by(user_id=current_user.id).first()
+        is not None
+    )
+
+    if not user_has_drinks:
+        return render_template(
+            "partials/drink_cards.html",
+            drinks=[],
+            favorites={},
+            page_type="mybar",
+            message="Non hai drink nel bar. Aggiungine uno adesso!",
+        )
+
+    drink_name = request.args.get("name", "").strip()
+    alcoholic_type = request.args.get("type", "")
+    category = request.args.get("category", "")
+    ingredient_names = request.args.getlist("ingredient[]")
+    fav_only = request.args.get("fav_only", False)
+
+    if drink_name:
+        search_words = drink_name.split()
+        if len(search_words) > 1:
+            # Multi-word search: each word should be present in the name
+            for word in search_words:
+                if len(word) > 2:  # Only filter on words with more than 2 characters
+                    query = query.where(UserDrink.name.ilike(f"%{word}%"))
+        else:
+            # Single word search: use the original approach
+            query = query.where(UserDrink.name.ilike(f"%{drink_name}%"))
+
+    if alcoholic_type:
+        query = query.where(UserDrink.alcoholic_type == AlcoholicType(alcoholic_type))
+
+    if category:
+        query = query.where(UserDrink.category == Category(category))
+
+    if ingredient_names:
+        for ingredient_name in ingredient_names:
+            query = query.where(
+                UserDrink.ingredients.any(Ingredient.name.ilike(f"%{ingredient_name}%"))
+            )
+
+    if fav_only:
+        query = query.join(LocalFavorite, LocalFavorite.id == UserDrink.id)
+        # query = query.where(LocalFavorite.user_id == current_user.id)
+
+    # Only show user's drinks
+    query = query.where(UserDrink.user == current_user)
+
+    drinks = db.session.execute(query).scalars().all()
+
+    favorites = {}
+    for drink in drinks:
+        favorites[drink.id] = is_local_favorite(drink.id, current_user)
+
+    if drinks:
+        random_drink = random.choice(drinks)  # noqa: S311
+
+    return f"""
+        <div class="card card-custom-modal">
+            <div class="card-image">
+                <figure class="image is-4by3">
+                <img src="{random_drink.get_thumbnail_url()}" alt="{random_drink.name}" class="image is-square" />
+                </figure>
+            </div>
+            <div class="card-content">
+                <p class="title is-5 title-custom-card">{random_drink.name}</p>
+                <a href="{url_for('main.specific_local', drink_id=random_drink.id)}" class="link">
+                Scopri il drink<span class="icon is-small ml-1">
+                    <i class="fas fa-arrow-right"></i>
+                </span>
+                </a>
+            </div>
+        </div>
+        """
