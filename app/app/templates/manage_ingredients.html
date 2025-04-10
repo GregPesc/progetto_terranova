@@ -1,0 +1,107 @@
+{% extends "layout.html" %} {% block head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/manage_ingredients.css') }}"
+/>
+{% endblock head %} {% block content %}
+<div class="container">
+  <h1 class="title1 text-center">Gestisci Ingredienti</h1>
+
+  <!-- Add Ingredient Form -->
+  <div class="add-ingredient-form">
+    <form
+      method="POST"
+      action="{{ url_for('manage_recipes.manage_ingredients') }}"
+    >
+      {{ form.hidden_tag() }}
+      <div class="field">
+        <label class="form-label">{{ form.name.label }}</label>
+        <div class="control">{{ form.name(class="input") }}</div>
+        {% if form.name.errors %}
+        <p class="help is-danger">
+          {% for error in form.name.errors %} {{ error }} {% endfor %}
+        </p>
+        {% endif %}
+      </div>
+      <div class="field">
+        <div class="control has-text-centered">
+          {{ form.submit(class="button add-button") }}
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="ingredients-container">
+    <!-- Custom Ingredients Section -->
+    <div class="ingredients-section">
+      <h2 class="title is-4">I Tuoi Ingredienti Personalizzati</h2>
+      <div class="ingredients-list">
+        {% if custom_ingredients %} {% for ingredient in custom_ingredients %}
+        <div class="ingredient-item" id="ingredient-{{ ingredient.id }}">
+          <span class="ingredient-name">{{ ingredient.name }}</span>
+          <form
+            method="POST"
+            action="{{ url_for('manage_recipes.delete_ingredient', ingredient_id=ingredient.id) }}"
+            class="delete-form"
+          >
+            <button
+              type="submit"
+              class="delete-button"
+              aria-label="Elimina ingrediente"
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </form>
+        </div>
+        {% endfor %} {% else %}
+        <div class="no-ingredients">
+          Non hai ancora creato ingredienti personalizzati.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Standard Ingredients Section -->
+    <div class="ingredients-section standard-ingredients">
+      <h2 class="title is-4">Ingredienti Standard</h2>
+      <div class="ingredients-list">
+        {% if standard_ingredients %} {% for ingredient in standard_ingredients
+        %}
+        <div class="ingredient-item">
+          <span class="ingredient-name">{{ ingredient.name }}</span>
+        </div>
+        {% endfor %} {% else %}
+        <div class="no-ingredients">
+          Nessun ingrediente standard disponibile.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Add confirmation dialog for ingredient deletion
+  document.addEventListener("DOMContentLoaded", function () {
+    const deleteForms = document.querySelectorAll(".delete-form");
+
+    deleteForms.forEach((form) => {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const ingredientName =
+          this.closest(".ingredient-item").querySelector(
+            ".ingredient-name"
+          ).textContent;
+
+        if (
+          confirm(
+            `Sei sicuro di voler eliminare l'ingrediente "${ingredientName}"?`
+          )
+        ) {
+          this.submit();
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

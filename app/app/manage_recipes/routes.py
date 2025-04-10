@@ -6,9 +6,9 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from PIL import Image
 
-from app import db
+from app import csrf, db
 from app.config import Config
-from app.manage_recipes.forms import RecipeForm
+from app.manage_recipes.forms import IngredientCreationForm, RecipeForm
 from app.manage_recipes.utils import process_ingredients, validate_recipe_data
 from app.models import (
     AlcoholicType,
@@ -151,3 +151,82 @@ def delete_custom_recipe(drink_id):
     db.session.commit()
 
     return "", 200
+
+
+@manage_recipes.route("/manage-ingredients", methods=["GET", "POST"])
+@login_required
+def manage_ingredients():
+    """Handle viewing, creating, and deleting custom ingredients."""
+    form = IngredientCreationForm()
+
+    if form.validate_on_submit():
+        # Check if ingredient with same name already exists for this user
+        existing = Ingredient.query.filter(
+            (Ingredient.name == form.name.data)
+            & ((Ingredient.user == current_user) | (Ingredient.user == None))  # noqa: E711
+        ).first()
+
+        if existing:
+            flash(f"Ingrediente '{form.name.data}' già esistente.", category="error")
+        else:
+            # Create new ingredient
+            new_ingredient = Ingredient(name=form.name.data, user=current_user)
+            db.session.add(new_ingredient)
+            db.session.commit()
+            flash(
+                f"Ingrediente '{form.name.data}' aggiunto con successo!",
+                category="success",
+            )
+            return redirect(url_for("manage_recipes.manage_ingredients"))
+
+    # Get all ingredients available to the user
+    custom_ingredients = (
+        Ingredient.query.filter(Ingredient.user == current_user)
+        .order_by(Ingredient.name)
+        .all()
+    )
+    standard_ingredients = (
+        Ingredient.query.filter(Ingredient.user == None).order_by(Ingredient.name).all()  # noqa: E711
+    )
+
+    return render_template(
+        "manage_ingredients.html",
+        title="Gestisci Ingredienti",
+        form=form,
+        custom_ingredients=custom_ingredients,
+        standard_ingredients=standard_ingredients,
+    )
+
+
+@manage_recipes.route("/delete-ingredient/<int:ingredient_id>", methods=["POST"])
+@login_required
+@csrf.exempt
+def delete_ingredient(ingredient_id):
+    """Handle the deletion of a custom ingredient."""
+    ingredient = Ingredient.query.get(ingredient_id)
+
+    if not ingredient:
+        flash("Ingrediente non trovato", category="error")
+        return redirect(url_for("manage_recipes.manage_ingredients"))
+
+    # Ensure the user can only delete their own ingredients
+    if ingredient.user != current_user:
+        flash("Non sei autorizzato a eliminare questo ingrediente", category="error")
+        return redirect(url_for("manage_recipes.manage_ingredients"))
+
+    # Check if the ingredient is used in any recipes
+    if ingredient.drinks:
+        flash(
+            f"Impossibile eliminare '{ingredient.name}': utilizzato in alcuni drink.",
+            category="error",
+        )
+        return redirect(url_for("manage_recipes.manage_ingredients"))
+
+    ingredient_name = ingredient.name
+    db.session.delete(ingredient)
+    db.session.commit()
+
+    flash(
+        f"Ingrediente '{ingredient_name}' eliminato con successo!", category="success"
+    )
+    return redirect(url_for("manage_recipes.manage_ingredients"))
