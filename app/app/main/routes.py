@@ -1,3 +1,4 @@
+import itertools
 import random
 import uuid
 
@@ -42,7 +43,6 @@ API_BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
 @main.route("/")
 def home():
     drinks = get_history_drinks()
-    drink = UserDrink.query.first()
 
     query = (
         select(UserDrink)
@@ -61,13 +61,31 @@ def home():
     favs = fav_local + fav_api
     fav_drinks = random.sample(favs, min(len(favs), 3))
 
+    query = select(ApiDrink)
+    catalog_drinks_temp = db.session.execute(query).scalars().all()
+    catalog_drinks = random.sample(
+        catalog_drinks_temp, min(len(catalog_drinks_temp), 3)
+    )
+
+    favorites = {}
+
+    # If user is authenticated, check which drinks are favorites
+    if current_user.is_authenticated:
+        for drink in itertools.chain(drinks, fav_drinks, catalog_drinks):
+            favorites[drink.id] = any(
+                (
+                    is_api_favorite(drink.id, current_user),
+                    is_local_favorite(drink.id, current_user),
+                )
+            )
+
     return render_template(
         "index.html",
         title="Applicazione",
         history_drinks=drinks,
         fav_drinks=fav_drinks,
-        drink=drink,
-        favorites=[],
+        catalog_drinks=catalog_drinks,
+        favorites=favorites,
     )
 
 
