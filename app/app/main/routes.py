@@ -770,11 +770,15 @@ def random_mybar():
     if drinks:
         random_drink = random.choice(drinks)  # noqa: S311
 
+    thumb = random_drink.get_thumbnail_url()
+    if not thumb:
+        thumb = url_for("static", filename="images/drink_placeholder.jpg")
+
     return f"""
         <div class="card card-custom-modal">
             <div class="card-image">
                 <figure class="image is-4by3">
-                <img src="{random_drink.get_thumbnail_url()}" alt="{random_drink.name}" class="image is-square" />
+                <img src="{thumb}" alt="{random_drink.name}" class="image is-square" />
                 </figure>
             </div>
             <div class="card-content">
