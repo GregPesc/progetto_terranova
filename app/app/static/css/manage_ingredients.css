@@ -1,4 +1,18 @@
 /* Styling for the manage ingredients page */
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.title1 {
+  margin-top: 20px;
+  color: #fe4a49;
+  font-size: 44px;
+  font-weight: bold;
+  text-align: center;
+}
+
 .ingredients-container {
   margin-top: 20px;
   display: flex;
@@ -54,11 +68,25 @@
 .add-ingredient-form {
   max-width: 500px;
   margin: 0 auto;
+  background-color: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .form-header {
   margin-bottom: 20px;
   text-align: center;
+}
+
+.input {
+  background-color: aliceblue !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-radius: 10px;
+  color: black;
+  padding: 10px;
 }
 
 .add-button {
@@ -68,6 +96,8 @@
   font-weight: normal !important;
   transition: all 0.3s ease !important;
   margin-top: 15px;
+  padding: 8px 15px;
+  border-radius: 10px;
 }
 
 .add-button:hover {
@@ -87,8 +117,27 @@
   color: #666;
 }
 
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding-bottom: 30px;
+}
+
+.title.is-4 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
 @media screen and (max-width: 768px) {
   .ingredients-list {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .title1 {
+    font-size: 36px;
+  }
+
+  .add-ingredient-form {
+    padding: 15px;
   }
 }

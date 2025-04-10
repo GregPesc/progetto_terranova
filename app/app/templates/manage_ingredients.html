@@ -5,10 +5,11 @@
 />
 {% endblock head %} {% block content %}
 <div class="container">
-  <h1 class="title1 text-center">Gestisci Ingredienti</h1>
+  <h1 class="title1">Gestisci Ingredienti</h1>
 
   <!-- Add Ingredient Form -->
   <div class="add-ingredient-form">
+    <h2 class="title is-4">Aggiungi Nuovo Ingrediente</h2>
     <form
       method="POST"
       action="{{ url_for('manage_recipes.manage_ingredients') }}"
@@ -16,7 +17,9 @@
       {{ form.hidden_tag() }}
       <div class="field">
         <label class="form-label">{{ form.name.label }}</label>
-        <div class="control">{{ form.name(class="input") }}</div>
+        <div class="control">
+          {{ form.name(class="input", placeholder="Nome ingrediente") }}
+        </div>
         {% if form.name.errors %}
         <p class="help is-danger">
           {% for error in form.name.errors %} {{ error }} {% endfor %}
