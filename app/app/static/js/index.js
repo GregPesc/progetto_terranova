@@ -22,6 +22,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Set top padding for main content based on navbar height
+  function adjustContentPadding() {
+    const navbar = document.querySelector(".navbar");
+    const content = document.getElementById("content");
+
+    if (navbar && content) {
+      const navbarHeight = navbar.offsetHeight;
+      content.style.paddingTop = navbarHeight + "px";
+    }
+  }
+
+  // Adjust padding on load
+  adjustContentPadding();
+
+  // Adjust padding on window resize
+  window.addEventListener("resize", adjustContentPadding);
+
   // Heart and trash button behavior
   document.body.addEventListener("click", function (e) {
     if (e.target.closest(".trash-button")) {
