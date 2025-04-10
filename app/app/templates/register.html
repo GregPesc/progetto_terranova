@@ -44,8 +44,8 @@
         <label class="form-label" for="confirm_password"
           >Conferma Password</label
         >
-        {{ form.confirm_password(id='confirm_password', placeholder='Conferma
-        password', class_='form-control') }} {% if form.confirm_password.errors
+        <!-- prettier-ignore -->
+        {{ form.confirm_password(id='confirm_password', placeholder='Conferma password', class_='form-control') }} {% if form.confirm_password.errors
         %}
         <div>
           {% for error in form.confirm_password.errors %}
