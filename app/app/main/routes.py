@@ -93,7 +93,7 @@ def home():
 
     return render_template(
         "index.html",
-        title="Applicazione",
+        title="Drink a Drink",
         history_drinks=history_drinks,
         fav_drinks=fav_drinks,
         catalog_drinks=catalog_drinks,

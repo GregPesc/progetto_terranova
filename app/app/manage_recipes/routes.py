@@ -113,7 +113,7 @@ def add_custom_recipe():
         else:
             flash("Dati errati.", category="error")
 
-    return render_template("add_recipe.html", form=form)
+    return render_template("add_recipe.html", title="Aggiungi drink", form=form)
 
 
 @manage_recipes.route("/custom-recipe/<string:drink_id>/delete", methods=["POST"])

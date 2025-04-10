@@ -45,13 +45,11 @@ def create_app():
     from app.login.routes import login
     from app.main.routes import main
     from app.manage_recipes.routes import manage_recipes
-    from app.random.routes import random
 
     app.register_blueprint(favorite)
     app.register_blueprint(login)
     app.register_blueprint(main)
     app.register_blueprint(manage_recipes)
-    app.register_blueprint(random)
 
     @app.route("/healthcheck")
     def healthcheck():

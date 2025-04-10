@@ -64,7 +64,7 @@ def register_route():
         flash("Utente registrato.", category="success")
         return redirect(url_for("main.home"))
 
-    return render_template("register.html", title="Register", form=form)
+    return render_template("register.html", title="Registrazione", form=form)
 
 
 @login.route("/account/logout")
