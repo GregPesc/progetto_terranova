@@ -130,7 +130,11 @@ def catalogo():
 @main.route("/mybar")
 @login_required
 def mybar():
-    drinks: list[UserDrink] = UserDrink.query.all()
+    drinks: list[UserDrink] = (
+        db.session.execute(select(UserDrink).where(UserDrink.user == current_user))
+        .scalars()
+        .all()
+    )
 
     favorites = {}
 
@@ -540,6 +544,7 @@ def filter_mybar():
         # query = query.where(LocalFavorite.user_id == current_user.id)
 
     # Only show user's drinks
+    print(current_user, flush=True)
     query = query.where(UserDrink.user == current_user)
 
     drinks = db.session.execute(query).scalars().all()
