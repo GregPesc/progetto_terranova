@@ -124,25 +124,24 @@
       </div>
     </nav>
 
-    <!-- prettier-ignore -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <!-- Start flashes section -->
-    <div class="container mt-3 mb-4" role="alert" aria-live="polite">
-      {% for category, message in messages %}
-      <div class="notification is-{{ category }} is-dismissable">
-        {{ message }}
-        <button class="delete" aria-label="Chiudi notifica"></button>
-      </div>
-      {% endfor %}
-    </div>
-    <!-- End flashes section -->
-    <!-- prettier-ignore -->
-    {% endif %}
-    {% endwith %}
-
     <!-- Start page content -->
-    <main id="content" class="px-2">
+    <main id="content" class="px-2" style="padding-top: 116px">
+      <!-- prettier-ignore -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <!-- Start flashes section -->
+      <div class="container mt-3 mb-4" role="alert" aria-live="polite">
+        {% for category, message in messages %}
+        <div class="notification is-{{ category }} is-dismissable">
+          {{ message }}
+          <button class="delete" aria-label="Chiudi notifica"></button>
+        </div>
+        {% endfor %}
+      </div>
+      <!-- End flashes section -->
+      <!-- prettier-ignore -->
+      {% endif %}
+      {% endwith %}
       {% block content %}{% endblock content %}
     </main>
     <!-- End page content -->
