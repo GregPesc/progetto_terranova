@@ -289,6 +289,7 @@ def specific_local(drink_id):
             drink=drink,
             ingredients=ingredients,
             is_favorite=is_favorite,
+            is_logged=current_user.is_authenticated,
         )
     )
 
