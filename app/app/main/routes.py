@@ -79,6 +79,12 @@ def home():
                 )
             )
 
+    # temp instead of 3 random drink images
+    drink_images = db.session.execute(select(ApiDrink)).scalars().all()
+    random.shuffle(drink_images)
+    images = drink_images[:3]
+    images = [d.get_thumbnail_url() for d in images]
+
     return render_template(
         "index.html",
         title="Applicazione",
@@ -86,6 +92,7 @@ def home():
         fav_drinks=fav_drinks,
         catalog_drinks=catalog_drinks,
         favorites=favorites,
+        images=images,
     )
 
 
@@ -117,6 +124,7 @@ def catalogo():
         categories=categories,
         alcoholic_types=alcoholic_types,
     )
+
 
 @main.route("/mybar")
 @login_required
