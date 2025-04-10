@@ -48,14 +48,6 @@ body {
   cursor: pointer;
 }
 
-.is-clicked-heart {
-  color: #ff3860;
-}
-
-.is-clicked-trash {
-  color: red;
-}
-
 .fixed-button {
   position: fixed !important;
   bottom: 60px;
