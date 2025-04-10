@@ -45,22 +45,27 @@ API_BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
 def home():
     history_drinks = get_history_drinks()
 
-    query = (
-        select(UserDrink)
-        .join(LocalFavorite, LocalFavorite.id == UserDrink.id)
-        .join(User, User.id == LocalFavorite.user_id)
-    )
-    fav_local = db.session.execute(query).scalars().all()
+    favs = []
+    if current_user.is_authenticated:
+        query = (
+            select(UserDrink)
+            .join(LocalFavorite, LocalFavorite.id == UserDrink.id)
+            .join(User, User.id == LocalFavorite.user_id)
+            .where(User.id == current_user.id)
+        )
+        fav_local = db.session.execute(query).scalars().all()
 
-    query = (
-        select(ApiDrink)
-        .join(ApiFavorite, ApiFavorite.id == ApiDrink.id)
-        .join(User, User.id == ApiFavorite.user_id)
-    )
-    fav_api = db.session.execute(query).scalars().all()
+        query = (
+            select(ApiDrink)
+            .join(ApiFavorite, ApiFavorite.id == ApiDrink.id)
+            .join(User, User.id == ApiFavorite.user_id)
+            .where(User.id == current_user.id)
+        )
+        fav_api = db.session.execute(query).scalars().all()
 
-    favs = fav_local + fav_api
-    fav_drinks = random.sample(favs, min(len(favs), 3))
+        favs = fav_local + fav_api
+
+    fav_drinks = random.sample(favs, min(len(favs), 3)) if favs else []
 
     query = select(ApiDrink)
     catalog_drinks_temp = db.session.execute(query).scalars().all()

@@ -24,6 +24,10 @@
       {% with drinks=fav_drinks, col_class="is-one-quarter" %}
       {% include "partials/drink_cards.html" %}
       {% endwith %}
+      {% else %}
+      <div class="notification is-info">
+        Fai il login per iniziare a salvare i preferiti!
+      </div>
       {% endif %}
   </section>
 
