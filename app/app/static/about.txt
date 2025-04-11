@@ -1,0 +1,10 @@
+
+/* TEAM */
+Giacomo Grassi
+Giulio Lazzerini
+Gregorio Pescucci gregorix006@gmail.com
+Tommaso Puliti
+Tommaso Tonelli
+
+/* SITE */
+Source code: https://github.com/GregPesc/progetto_terranova

@@ -41,6 +41,11 @@ main = Blueprint("main", __name__)
 API_BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
 
 
+@main.route("/about")
+def about():
+    return send_from_directory("static", "about.txt")
+
+
 @main.route("/")
 def home():
     history_drinks = get_history_drinks()

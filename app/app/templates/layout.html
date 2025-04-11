@@ -8,7 +8,11 @@
     />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Applicazione." />
+    <meta
+      name="description"
+      content="Drink a Drink - Scopri e crea i migliori cocktail con ingredienti disponibili nel tuo bar personale!"
+    />
+    <link rel="author" href="{{ url_for('main.about') }}" />
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/bulma.min.css') }}"
@@ -85,6 +89,12 @@
             aria-label="Vai al tuo bar"
             >MyBar</a
           >
+          <a
+            class="navbar-item"
+            href="{{ url_for('main.about') }}"
+            aria-label="About"
+            >About
+          </a>
         </div>
         <div class="navbar-end">
           <div class="navbar-item">
