@@ -1,10 +1,6 @@
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-load_dotenv(Path(__file__).resolve().parent / ".env")
-# print(Path(__file__).resolve().parent / ".env", flush=True)
 
 class Config:
     BASE_DIR = Path(__file__).resolve().parent

@@ -25,8 +25,9 @@ python -m .venv .venv
 .\.venv\Scripts\activate
 pip install -r app\requirements.txt
 notepad .env
-(Incolla la seguente riga, salva e chiudi)
+(Incolla le seguenti righe, salva e chiudi. Per le funzionalità AI devi inserire una chiave Gemini valida)
 FLASK_SECRET_KEY=your-local-dev-secret
+GEMINI_API_KEY=your-api-key
 ```
 
 ## Avviare l'applicazione
