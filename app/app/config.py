@@ -1,6 +1,10 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent / ".env")
+# print(Path(__file__).resolve().parent / ".env", flush=True)
 
 class Config:
     BASE_DIR = Path(__file__).resolve().parent
@@ -8,3 +12,4 @@ class Config:
     SQLALCHEMY_DATABASE_URI = "sqlite:///project.db"
     BCRYPT_HANDLE_LONG_PASSWORDS = True
     UPLOAD_FOLDER = BASE_DIR / "uploads"
+    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")

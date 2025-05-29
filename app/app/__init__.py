@@ -41,11 +41,13 @@ def create_app():
     login_manager.init_app(app)
     csrf.init_app(app)
 
+    from app.ai.routes import ai
     from app.favorite.routes import favorite
     from app.login.routes import login
     from app.main.routes import main
     from app.manage_recipes.routes import manage_recipes
 
+    app.register_blueprint(ai)
     app.register_blueprint(favorite)
     app.register_blueprint(login)
     app.register_blueprint(main)
